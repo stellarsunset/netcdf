@@ -14,7 +14,7 @@ repositories {
 
 dependencies {
 
-    implementation(libs.cdm.core)
+    api(libs.cdm.core)
     implementation(libs.guava)
     implementation(libs.slf4j.api)
 

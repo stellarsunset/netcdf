@@ -6,6 +6,12 @@ junit-jupiter = "5.10.1"
 
 [libraries]
 cdm-core = { module = "edu.ucar:cdm-core", version.ref = "netcdf" }
+
+# Runtime dependencies supporting specific file formats
+bufr = { module = "edu.ucar:bufr", version.ref = "netcdf" }
+grib = { module = "edu.ucar:grib", version.ref = "netcdf" }
+opendap = { module = "edu.ucar:opendap", version.ref = "netcdf" }
+
 guava = { module = "com.google.guava:guava", version.ref = "guava" }
 slf4j-api = { module = "org.slf4j:slf4j-api", version.ref = "slf4j" }
 junit-jupiter = { module = "org.junit.jupiter:junit-jupiter", version.ref = "junit-jupiter" }
