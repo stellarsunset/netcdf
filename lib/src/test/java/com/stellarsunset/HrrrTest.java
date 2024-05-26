@@ -24,9 +24,9 @@ class HrrrTest {
 
             var binding = SchemaBinding.<Vil.Builder>builder()
                     .recordSupplier(Vil::builder)
-                    .floatDimension("x", Vil.Builder::x)
-                    .floatDimension("y", Vil.Builder::y)
-                    .floatVariable("Vertically_integrated_liquid_water_VIL_entire_atmosphere", Vil.Builder::vil)
+                    .floatDimensionVariable("x", Vil.Builder::x)
+                    .floatDimensionVariable("y", Vil.Builder::y)
+                    .floatCoordinateVariable("Vertically_integrated_liquid_water_VIL_entire_atmosphere", Vil.Builder::vil)
                     .build();
 
             var reader = NetcdfRecordReader.schemaBound(binding);

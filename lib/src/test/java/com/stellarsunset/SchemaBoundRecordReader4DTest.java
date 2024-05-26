@@ -42,11 +42,11 @@ class SchemaBoundRecordReader4DTest {
 
         var binding = SchemaBinding.<Data4D.Builder>builder()
                 .recordSupplier(Data4D::builder)
-                .intDimension("x", Data4D.Builder::x)
-                .intDimension("y", Data4D.Builder::y)
-                .intDimension("z", Data4D.Builder::z)
-                .intDimension("t", Data4D.Builder::t)
-                .byteVariable("byte", (b, v) -> b.variable("byte", v))
+                .intDimensionVariable("x", Data4D.Builder::x)
+                .intDimensionVariable("y", Data4D.Builder::y)
+                .intDimensionVariable("z", Data4D.Builder::z)
+                .intDimensionVariable("t", Data4D.Builder::t)
+                .byteCoordinateVariable("byte", (b, v) -> b.variable("byte", v))
                 .build();
 
         List<Data4D> data = readAll(binding);
@@ -89,13 +89,13 @@ class SchemaBoundRecordReader4DTest {
 
         var binding = SchemaBinding.<Data4D.Builder>builder()
                 .recordSupplier(Data4D::builder)
-                .intDimension("x", Data4D.Builder::x)
-                .intDimension("y", Data4D.Builder::y)
-                .intDimension("z", Data4D.Builder::z)
-                .intDimension("t", Data4D.Builder::t)
-                .byteVariable("byte", (b, v) -> b.variable("byte", v))
-                .intVariable("int", (b, v) -> b.variable("int", v))
-                .doubleVariable("double", (b, v) -> b.variable("double", v))
+                .intDimensionVariable("x", Data4D.Builder::x)
+                .intDimensionVariable("y", Data4D.Builder::y)
+                .intDimensionVariable("z", Data4D.Builder::z)
+                .intDimensionVariable("t", Data4D.Builder::t)
+                .byteCoordinateVariable("byte", (b, v) -> b.variable("byte", v))
+                .intCoordinateVariable("int", (b, v) -> b.variable("int", v))
+                .doubleCoordinateVariable("double", (b, v) -> b.variable("double", v))
                 .build();
 
         List<Data4D> data = readAll(binding);
@@ -138,7 +138,7 @@ class SchemaBoundRecordReader4DTest {
 
         var binding = SchemaBinding.<Data4D.Builder>builder()
                 .recordSupplier(Data4D::builder)
-                .byteVariable("byte", (b, v) -> b.variable("byte", v))
+                .byteCoordinateVariable("byte", (b, v) -> b.variable("byte", v))
                 .build();
 
         List<Data4D> data = readAll(binding);

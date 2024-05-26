@@ -42,8 +42,8 @@ class SchemaBoundRecordReader1DTest {
 
         var binding = SchemaBinding.<Data1D.Builder>builder()
                 .recordSupplier(Data1D::builder)
-                .intDimension("x", Data1D.Builder::x)
-                .byteVariable("byte", (b, v) -> b.variable("byte", v))
+                .intDimensionVariable("x", Data1D.Builder::x)
+                .byteCoordinateVariable("byte", (b, v) -> b.variable("byte", v))
                 .build();
 
         List<Data1D> data = readAll(binding);
@@ -66,10 +66,10 @@ class SchemaBoundRecordReader1DTest {
 
         var binding = SchemaBinding.<Data1D.Builder>builder()
                 .recordSupplier(Data1D::builder)
-                .intDimension("x", Data1D.Builder::x)
-                .byteVariable("byte", (b, v) -> b.variable("byte", v))
-                .intVariable("int", (b, v) -> b.variable("int", v))
-                .doubleVariable("double", (b, v) -> b.variable("double", v))
+                .intDimensionVariable("x", "x", Data1D.Builder::x)
+                .byteCoordinateVariable("byte", (b, v) -> b.variable("byte", v))
+                .intCoordinateVariable("int", (b, v) -> b.variable("int", v))
+                .doubleCoordinateVariable("double", (b, v) -> b.variable("double", v))
                 .build();
 
         List<Data1D> data = readAll(binding);
@@ -92,7 +92,7 @@ class SchemaBoundRecordReader1DTest {
 
         var binding = SchemaBinding.<Data1D.Builder>builder()
                 .recordSupplier(Data1D::builder)
-                .byteVariable("byte", (b, v) -> b.variable("byte", v))
+                .byteCoordinateVariable("byte", (b, v) -> b.variable("byte", v))
                 .build();
 
         List<Data1D> data = readAll(binding);

@@ -42,9 +42,9 @@ class SchemaBoundRecordReader2DTest {
 
         var binding = SchemaBinding.<Data2D.Builder>builder()
                 .recordSupplier(Data2D::builder)
-                .intDimension("x", Data2D.Builder::x)
-                .intDimension("y", Data2D.Builder::y)
-                .byteVariable("byte", (b, v) -> b.variable("byte", v))
+                .intDimensionVariable("x", Data2D.Builder::x)
+                .intDimensionVariable("y", Data2D.Builder::y)
+                .byteCoordinateVariable("byte", (b, v) -> b.variable("byte", v))
                 .build();
 
         List<Data2D> data = readAll(binding);
@@ -69,11 +69,11 @@ class SchemaBoundRecordReader2DTest {
 
         var binding = SchemaBinding.<Data2D.Builder>builder()
                 .recordSupplier(Data2D::builder)
-                .intDimension("x", Data2D.Builder::x)
-                .intDimension("y", Data2D.Builder::y)
-                .byteVariable("byte", (b, v) -> b.variable("byte", v))
-                .intVariable("int", (b, v) -> b.variable("int", v))
-                .doubleVariable("double", (b, v) -> b.variable("double", v))
+                .intDimensionVariable("x", Data2D.Builder::x)
+                .intDimensionVariable("y", Data2D.Builder::y)
+                .byteCoordinateVariable("byte", (b, v) -> b.variable("byte", v))
+                .intCoordinateVariable("int", (b, v) -> b.variable("int", v))
+                .doubleCoordinateVariable("double", (b, v) -> b.variable("double", v))
                 .build();
 
         List<Data2D> data = readAll(binding);
@@ -98,7 +98,7 @@ class SchemaBoundRecordReader2DTest {
 
         var binding = SchemaBinding.<Data2D.Builder>builder()
                 .recordSupplier(Data2D::builder)
-                .byteVariable("byte", (b, v) -> b.variable("byte", v))
+                .byteCoordinateVariable("byte", (b, v) -> b.variable("byte", v))
                 .build();
 
         List<Data2D> data = readAll(binding);

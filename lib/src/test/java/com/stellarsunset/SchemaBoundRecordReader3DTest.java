@@ -42,10 +42,10 @@ class SchemaBoundRecordReader3DTest {
 
         var binding = SchemaBinding.<Data3D.Builder>builder()
                 .recordSupplier(Data3D::builder)
-                .intDimension("x", Data3D.Builder::x)
-                .intDimension("y", Data3D.Builder::y)
-                .intDimension("z", Data3D.Builder::z)
-                .byteVariable("byte", (b, v) -> b.variable("byte", v))
+                .intDimensionVariable("x", Data3D.Builder::x)
+                .intDimensionVariable("y", Data3D.Builder::y)
+                .intDimensionVariable("z", Data3D.Builder::z)
+                .byteCoordinateVariable("byte", (b, v) -> b.variable("byte", v))
                 .build();
 
         List<Data3D> data = readAll(binding);
@@ -78,12 +78,12 @@ class SchemaBoundRecordReader3DTest {
 
         var binding = SchemaBinding.<Data3D.Builder>builder()
                 .recordSupplier(Data3D::builder)
-                .intDimension("x", Data3D.Builder::x)
-                .intDimension("y", Data3D.Builder::y)
-                .intDimension("z", Data3D.Builder::z)
-                .byteVariable("byte", (b, v) -> b.variable("byte", v))
-                .intVariable("int", (b, v) -> b.variable("int", v))
-                .doubleVariable("double", (b, v) -> b.variable("double", v))
+                .intDimensionVariable("x", Data3D.Builder::x)
+                .intDimensionVariable("y", Data3D.Builder::y)
+                .intDimensionVariable("z", Data3D.Builder::z)
+                .byteCoordinateVariable("byte", (b, v) -> b.variable("byte", v))
+                .intCoordinateVariable("int", (b, v) -> b.variable("int", v))
+                .doubleCoordinateVariable("double", (b, v) -> b.variable("double", v))
                 .build();
 
         List<Data3D> data = readAll(binding);
@@ -116,7 +116,7 @@ class SchemaBoundRecordReader3DTest {
 
         var binding = SchemaBinding.<Data3D.Builder>builder()
                 .recordSupplier(Data3D::builder)
-                .byteVariable("byte", (b, v) -> b.variable("byte", v))
+                .byteCoordinateVariable("byte", (b, v) -> b.variable("byte", v))
                 .build();
 
         List<Data3D> data = readAll(binding);

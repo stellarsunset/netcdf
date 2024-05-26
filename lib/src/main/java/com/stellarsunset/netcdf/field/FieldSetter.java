@@ -7,5 +7,5 @@ package com.stellarsunset.netcdf.field;
  * <p>Using the {@link java.util.function.Consumer} forces boxing and unboxing of primitive types and incurs significant
  * overhead when processing billions of data points.
  */
-public sealed interface FieldSetter<T> permits ByteSetter, CharacterSetter, BooleanSetter, ShortSetter, IntSetter, LongSetter, FloatSetter, DoubleSetter {
+public sealed interface FieldSetter<T> permits NoopSetter, ByteSetter, CharacterSetter, BooleanSetter, ShortSetter, IntSetter, LongSetter, FloatSetter, DoubleSetter {
 }

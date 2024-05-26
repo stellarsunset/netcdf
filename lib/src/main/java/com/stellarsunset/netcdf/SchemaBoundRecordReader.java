@@ -2,8 +2,7 @@ package com.stellarsunset.netcdf;
 
 import com.stellarsunset.netcdf.field.*;
 import ucar.ma2.Array;
-import ucar.ma2.ArrayByte;
-import ucar.ma2.Index;
+import ucar.nc2.Dimension;
 import ucar.nc2.NetcdfFile;
 import ucar.nc2.Variable;
 
@@ -14,7 +13,6 @@ import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 import static java.util.Objects.requireNonNull;
-import static java.util.Optional.ofNullable;
 
 record SchemaBoundRecordReader<T>(SchemaBinding<T> binding) implements NetcdfRecordReader<T> {
 
@@ -24,60 +22,65 @@ record SchemaBoundRecordReader<T>(SchemaBinding<T> binding) implements NetcdfRec
 
         SchemaBindingValidator.checkValidity(file, binding);
 
-        List<Setter<T>> varSetters = new ArrayList<>();
-        List<Array> varArrays = new ArrayList<>();
+        List<Setter<T>> coordinateSetters = new ArrayList<>();
+        List<Array> coordinateArrays = new ArrayList<>();
 
-        for (var entry : binding.variables().entrySet()) {
+        for (var entry : binding.coordinateVariables().entrySet()) {
 
             Variable variable = file.findVariable(entry.getKey());
 
-            varSetters.add(Setter.from(entry.getValue()));
-            varArrays.add(variable.read().reduce()); // reduce any dimensions of length 1
+            coordinateSetters.add(Setter.from(entry.getValue()));
+            coordinateArrays.add(variable.read().reduce()); // reduce any dimensions of length 1
         }
 
-        VariablesSetter<T> variablesSetter = VariablesSetter.from(
-                varSetters.toArray(Setter[]::new),
-                varArrays.toArray(Array[]::new)
+        VariablesSetter<T> coordinatesSetter = VariablesSetter.from(
+                coordinateSetters.toArray(Setter[]::new),
+                coordinateArrays.toArray(Array[]::new)
         );
 
         // Grab only the dimensions of our variables with a length greater than 1
-        var orderedNonZeroDimensions = file.findVariable(binding.variables().keySet().iterator().next())
+        var orderedNonZeroDimensions = file.findVariable(binding.coordinateVariables().keySet().iterator().next())
                 .getDimensions()
                 .stream()
                 .filter(d -> d.getLength() != 1)
                 .toList();
 
-        List<Setter<T>> dimSetters = new ArrayList<>();
-        List<Array> dimArrays = new ArrayList<>();
+        int dimensionCount = orderedNonZeroDimensions.size();
 
-        for (var dimension : orderedNonZeroDimensions) {
+        VariablesSetter<T>[] dimensionsSetters = new VariablesSetter[dimensionCount];
 
-            Optional<Variable> oDimension = ofNullable(file.findVariable(dimension.getName()));
+        int[] dimensionLengths = orderedNonZeroDimensions.stream()
+                .mapToInt(Dimension::getLength)
+                .toArray();
 
-            Optional<Setter<T>> oSetter = ofNullable(binding.dimensions().get(dimension.getName()))
-                    .map(Setter::from);
+        for (int i = 0; i < dimensionCount; i++) {
 
-            if (oSetter.isEmpty()) {
+            var dimension = orderedNonZeroDimensions.get(i);
 
-                dimSetters.add(Setter.noop());
-                dimArrays.add(new ArrayByte.D1(dimension.getLength(), false));
+            List<Setter<T>> dimensionSetters = new ArrayList<>();
+            List<Array> dimensionArrays = new ArrayList<>();
 
-            } else {
+            for (var variableName : binding.variablesFor(dimension.getName())) {
 
-                Variable dimVariable = oDimension.orElseThrow(
-                        () -> new IllegalArgumentException("Requested Dimension without adjacent variable defining values: " + dimension.getName())
-                );
+                Variable variable = file.findVariable(variableName);
 
-                dimSetters.add(oSetter.get());
-                dimArrays.add(dimVariable.read());
+                dimensionSetters.add(Setter.from(binding.dimensionVariableSetter(variableName)));
+                dimensionArrays.add(variable.read());
             }
+
+            VariablesSetter<T> dimensionsSetter = VariablesSetter.from(
+                    dimensionSetters.toArray(Setter[]::new),
+                    dimensionArrays.toArray(Array[]::new)
+            );
+
+            dimensionsSetters[i] = dimensionsSetter;
         }
 
         RecordIterator<T> iterator = RecordIterator.from(
                 binding().recordSupplier(),
-                dimSetters.toArray(Setter[]::new),
-                dimArrays.toArray(Array[]::new),
-                variablesSetter
+                dimensionsSetters,
+                dimensionLengths,
+                coordinatesSetter
         );
 
         return StreamSupport.stream(
@@ -99,6 +102,7 @@ record SchemaBoundRecordReader<T>(SchemaBinding<T> binding) implements NetcdfRec
 
         static <T> Setter<T> from(FieldSetter<T> setter) {
             return switch (setter) {
+                case NoopSetter<T> ns -> new Noop<>();
                 case ByteSetter<T> bs -> new Byte<>(bs);
                 case CharacterSetter<T> cs -> new Character<>(cs);
                 case BooleanSetter<T> bs -> new Boolean<>(bs);
@@ -181,55 +185,54 @@ record SchemaBoundRecordReader<T>(SchemaBinding<T> binding) implements NetcdfRec
         /**
          * Create a new record iterator which returns a lazy sequence of records pulled from the underlying cdm data.
          *
-         * @param supplier   supplier for new record instances to call setters against
-         * @param dimSetters setters on the objects for dimension values
-         * @param dimensions the data arrays containing the dimension values
-         * @param varsSetter setter for injecting the variable value at the dimension coordinates into the record
+         * @param supplier         supplier for new record instances to call setters against
+         * @param dimensionSetters setters on the objects for dimension values
+         * @param dimensionLengths the length of each dimension
+         * @param varsSetter       setter for injecting the variable value at the dimension coordinates into the record
          */
-        static <T> RecordIterator<T> from(Supplier<T> supplier, Setter<T>[] dimSetters, Array[] dimensions, VariablesSetter<T> varsSetter) {
-            return switch (dimSetters.length) {
+        static <T> RecordIterator<T> from(Supplier<T> supplier, VariablesSetter<T>[] dimensionSetters, int[] dimensionLengths, VariablesSetter<T> varsSetter) {
+            return switch (dimensionLengths.length) {
                 case 1 -> new D1<>(
                         supplier,
-                        dimSetters[0],
-                        dimensions[0],
+                        dimensionSetters[0],
+                        dimensionLengths[0],
                         varsSetter
                 );
                 case 2 -> new D2<>(
                         supplier,
-                        dimSetters[0],
-                        dimensions[0],
-                        dimSetters[1],
-                        dimensions[1],
+                        dimensionSetters[0],
+                        dimensionLengths[0],
+                        dimensionSetters[1],
+                        dimensionLengths[1],
                         varsSetter
                 );
                 case 3 -> new D3<>(
                         supplier,
-                        dimSetters[0],
-                        dimensions[0],
-                        dimSetters[1],
-                        dimensions[1],
-                        dimSetters[2],
-                        dimensions[2],
+                        dimensionSetters[0],
+                        dimensionLengths[0],
+                        dimensionSetters[1],
+                        dimensionLengths[1],
+                        dimensionSetters[2],
+                        dimensionLengths[2],
                         varsSetter
                 );
                 case 4 -> new D4<>(
                         supplier,
-                        dimSetters[0],
-                        dimensions[0],
-                        dimSetters[1],
-                        dimensions[1],
-                        dimSetters[2],
-                        dimensions[2],
-                        dimSetters[3],
-                        dimensions[3],
+                        dimensionSetters[0],
+                        dimensionLengths[0],
+                        dimensionSetters[1],
+                        dimensionLengths[1],
+                        dimensionSetters[2],
+                        dimensionLengths[2],
+                        dimensionSetters[3],
+                        dimensionLengths[3],
                         varsSetter
                 );
                 default -> new DN<>(
                         supplier,
-                        dimSetters,
-                        dimensions,
-                        varsSetter,
-                        dimensions[0].getIndex()
+                        dimensionSetters,
+                        dimensionLengths,
+                        varsSetter
                 );
             };
         }
@@ -237,18 +240,16 @@ record SchemaBoundRecordReader<T>(SchemaBinding<T> binding) implements NetcdfRec
         final class D1<T> implements RecordIterator<T> {
 
             private final Supplier<T> supplier;
-            private final Setter<T> s0;
-            private final Array d0;
-            private final VariablesSetter<T> varsSetter;
+            private final VariablesSetter<T> d0Setter;
+            private final VariablesSetter<T> coordinatesSetter;
             private final int max0;
             private int i0;
 
-            private D1(Supplier<T> supplier, Setter<T> s0, Array d0, VariablesSetter<T> varsSetter) {
+            private D1(Supplier<T> supplier, VariablesSetter<T> d0Setter, int max0, VariablesSetter<T> coordinatesSetter) {
                 this.supplier = requireNonNull(supplier);
-                this.s0 = requireNonNull(s0);
-                this.d0 = requireNonNull(d0);
-                this.varsSetter = requireNonNull(varsSetter);
-                this.max0 = d0.getShape()[0];
+                this.d0Setter = requireNonNull(d0Setter);
+                this.coordinatesSetter = requireNonNull(coordinatesSetter);
+                this.max0 = max0;
                 this.i0 = 0;
             }
 
@@ -259,7 +260,7 @@ record SchemaBoundRecordReader<T>(SchemaBinding<T> binding) implements NetcdfRec
 
             @Override
             public T next() {
-                T t = varsSetter.set(s0.set(supplier.get(), i0, d0), i0);
+                T t = coordinatesSetter.set(d0Setter.set(supplier.get(), i0), i0);
                 i0++;
                 return t;
             }
@@ -268,11 +269,9 @@ record SchemaBoundRecordReader<T>(SchemaBinding<T> binding) implements NetcdfRec
         final class D2<T> implements RecordIterator<T> {
 
             private final Supplier<T> supplier;
-            private final Setter<T> s0;
-            private final Array d0;
-            private final Setter<T> s1;
-            private final Array d1;
-            private final VariablesSetter<T> varsSetter;
+            private final VariablesSetter<T> d0Setter;
+            private final VariablesSetter<T> d1Setter;
+            private final VariablesSetter<T> coordinatesSetter;
 
             private final int max0;
             private int i0;
@@ -280,16 +279,14 @@ record SchemaBoundRecordReader<T>(SchemaBinding<T> binding) implements NetcdfRec
             private int i1;
             private int element;
 
-            private D2(Supplier<T> supplier, Setter<T> s0, Array d0, Setter<T> s1, Array d1, VariablesSetter<T> varsSetter) {
+            private D2(Supplier<T> supplier, VariablesSetter<T> d0Setter, int max0, VariablesSetter<T> d1Setter, int max1, VariablesSetter<T> coordinatesSetter) {
                 this.supplier = requireNonNull(supplier);
-                this.s0 = requireNonNull(s0);
-                this.d0 = requireNonNull(d0);
-                this.s1 = requireNonNull(s1);
-                this.d1 = requireNonNull(d1);
-                this.varsSetter = requireNonNull(varsSetter);
-                this.max0 = d0.getShape()[0];
+                this.d0Setter = requireNonNull(d0Setter);
+                this.d1Setter = requireNonNull(d1Setter);
+                this.coordinatesSetter = requireNonNull(coordinatesSetter);
+                this.max0 = max0;
                 this.i0 = 0;
-                this.max1 = d1.getShape()[0];
+                this.max1 = max1;
                 this.i1 = 0;
                 this.element = 0;
             }
@@ -301,7 +298,7 @@ record SchemaBoundRecordReader<T>(SchemaBinding<T> binding) implements NetcdfRec
 
             @Override
             public T next() {
-                T t = varsSetter.set(s0.set(s1.set(supplier.get(), i1, d1), i0, d0), element);
+                T t = coordinatesSetter.set(d0Setter.set(d1Setter.set(supplier.get(), i1), i0), element);
 
                 if (i0 + 1 < max0) {
                     i0++;
@@ -318,13 +315,10 @@ record SchemaBoundRecordReader<T>(SchemaBinding<T> binding) implements NetcdfRec
         final class D3<T> implements RecordIterator<T> {
 
             private final Supplier<T> supplier;
-            private final Setter<T> s0;
-            private final Array d0;
-            private final Setter<T> s1;
-            private final Array d1;
-            private final Setter<T> s2;
-            private final Array d2;
-            private final VariablesSetter<T> varsSetter;
+            private final VariablesSetter<T> d0Setter;
+            private final VariablesSetter<T> d1Setter;
+            private final VariablesSetter<T> d2Setter;
+            private final VariablesSetter<T> coordinatesSetter;
 
             private final int max0;
             private int i0;
@@ -334,20 +328,17 @@ record SchemaBoundRecordReader<T>(SchemaBinding<T> binding) implements NetcdfRec
             private int i2;
             private int element;
 
-            private D3(Supplier<T> supplier, Setter<T> s0, Array d0, Setter<T> s1, Array d1, Setter<T> s2, Array d2, VariablesSetter<T> varsSetter) {
+            private D3(Supplier<T> supplier, VariablesSetter<T> d0Setter, int max0, VariablesSetter<T> d1Setter, int max1, VariablesSetter<T> d2Setter, int max2, VariablesSetter<T> coordinatesSetter) {
                 this.supplier = requireNonNull(supplier);
-                this.s0 = requireNonNull(s0);
-                this.d0 = requireNonNull(d0);
-                this.s1 = requireNonNull(s1);
-                this.d1 = requireNonNull(d1);
-                this.s2 = requireNonNull(s2);
-                this.d2 = requireNonNull(d2);
-                this.varsSetter = requireNonNull(varsSetter);
-                this.max0 = d0.getShape()[0];
+                this.d0Setter = requireNonNull(d0Setter);
+                this.d1Setter = requireNonNull(d1Setter);
+                this.d2Setter = requireNonNull(d2Setter);
+                this.coordinatesSetter = requireNonNull(coordinatesSetter);
+                this.max0 = max0;
                 this.i0 = 0;
-                this.max1 = d1.getShape()[0];
+                this.max1 = max1;
                 this.i1 = 0;
-                this.max2 = d2.getShape()[0];
+                this.max2 = max2;
                 this.i2 = 0;
                 this.element = 0;
             }
@@ -359,7 +350,7 @@ record SchemaBoundRecordReader<T>(SchemaBinding<T> binding) implements NetcdfRec
 
             @Override
             public T next() {
-                T t = varsSetter.set(s0.set(s1.set(s2.set(supplier.get(), i2, d2), i1, d1), i0, d0), element);
+                T t = coordinatesSetter.set(d0Setter.set(d1Setter.set(d2Setter.set(supplier.get(), i2), i1), i0), element);
 
                 if (i0 + 1 < max0) {
                     i0++;
@@ -380,15 +371,11 @@ record SchemaBoundRecordReader<T>(SchemaBinding<T> binding) implements NetcdfRec
         final class D4<T> implements RecordIterator<T> {
 
             private final Supplier<T> supplier;
-            private final Setter<T> s0;
-            private final Array d0;
-            private final Setter<T> s1;
-            private final Array d1;
-            private final Setter<T> s2;
-            private final Array d2;
-            private final Setter<T> s3;
-            private final Array d3;
-            private final VariablesSetter<T> varsSetter;
+            private final VariablesSetter<T> d0Setter;
+            private final VariablesSetter<T> d1Setter;
+            private final VariablesSetter<T> d2Setter;
+            private final VariablesSetter<T> d3Setter;
+            private final VariablesSetter<T> coordinatesSetter;
 
             private final int max0;
             private int i0;
@@ -400,24 +387,20 @@ record SchemaBoundRecordReader<T>(SchemaBinding<T> binding) implements NetcdfRec
             private int i3;
             private int element;
 
-            private D4(Supplier<T> supplier, Setter<T> s0, Array d0, Setter<T> s1, Array d1, Setter<T> s2, Array d2, Setter<T> s3, Array d3, VariablesSetter<T> varsSetter) {
+            private D4(Supplier<T> supplier, VariablesSetter<T> d0Setter, int max0, VariablesSetter<T> d1Setter, int max1, VariablesSetter<T> d2Setter, int max2, VariablesSetter<T> d3Setter, int max3, VariablesSetter<T> coordinatesSetter) {
                 this.supplier = requireNonNull(supplier);
-                this.s0 = requireNonNull(s0);
-                this.d0 = requireNonNull(d0);
-                this.s1 = requireNonNull(s1);
-                this.d1 = requireNonNull(d1);
-                this.s2 = requireNonNull(s2);
-                this.d2 = requireNonNull(d2);
-                this.s3 = requireNonNull(s3);
-                this.d3 = requireNonNull(d3);
-                this.varsSetter = requireNonNull(varsSetter);
-                this.max0 = d0.getShape()[0];
+                this.d0Setter = requireNonNull(d0Setter);
+                this.d1Setter = requireNonNull(d1Setter);
+                this.d2Setter = requireNonNull(d2Setter);
+                this.d3Setter = requireNonNull(d3Setter);
+                this.coordinatesSetter = requireNonNull(coordinatesSetter);
+                this.max0 = max0;
                 this.i0 = 0;
-                this.max1 = d1.getShape()[0];
+                this.max1 = max1;
                 this.i1 = 0;
-                this.max2 = d2.getShape()[0];
+                this.max2 = max2;
                 this.i2 = 0;
-                this.max3 = d3.getShape()[0];
+                this.max3 = max3;
                 this.i3 = 0;
                 this.element = 0;
             }
@@ -429,7 +412,7 @@ record SchemaBoundRecordReader<T>(SchemaBinding<T> binding) implements NetcdfRec
 
             @Override
             public T next() {
-                T t = varsSetter.set(s0.set(s1.set(s2.set(s3.set(supplier.get(), i3, d3), i2, d2), i1, d1), i0, d0), element);
+                T t = coordinatesSetter.set(d0Setter.set(d1Setter.set(d2Setter.set(d3Setter.set(supplier.get(), i3), i2), i1), i0), element);
 
                 if (i0 + 1 < max0) {
                     i0++;
@@ -453,8 +436,8 @@ record SchemaBoundRecordReader<T>(SchemaBinding<T> binding) implements NetcdfRec
         }
 
 
-        record DN<T>(Supplier<T> supplier, Setter<T>[] dimSetters, Array[] dimensions,
-                     VariablesSetter<T> varsSetter, Index index) implements RecordIterator<T> {
+        record DN<T>(Supplier<T> supplier, VariablesSetter<T>[] dimSetters, int[] dimensions,
+                     VariablesSetter<T> varsSetter) implements RecordIterator<T> {
 
             @Override
             public boolean hasNext() {
