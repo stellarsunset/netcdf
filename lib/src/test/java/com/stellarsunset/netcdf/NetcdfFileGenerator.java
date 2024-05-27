@@ -1,4 +1,4 @@
-package com.stellarsunset;
+package com.stellarsunset.netcdf;
 
 import ucar.ma2.ArrayInt;
 import ucar.ma2.DataType;

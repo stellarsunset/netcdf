@@ -94,7 +94,7 @@ record SchemaBoundRecordReader<T>(SchemaBinding<T> binding) implements NetcdfRec
      *
      * <p>These setters need to encapsulate the boolean/character/etc. read operations.
      */
-    private sealed interface Setter<T> {
+    interface Setter<T> {
 
         static <T> Setter<T> noop() {
             return new Noop<>();
@@ -180,7 +180,7 @@ record SchemaBoundRecordReader<T>(SchemaBinding<T> binding) implements NetcdfRec
         }
     }
 
-    private sealed interface RecordIterator<T> extends Iterator<T> {
+    sealed interface RecordIterator<T> extends Iterator<T> {
 
         /**
          * Create a new record iterator which returns a lazy sequence of records pulled from the underlying cdm data.
@@ -451,7 +451,7 @@ record SchemaBoundRecordReader<T>(SchemaBinding<T> binding) implements NetcdfRec
         }
     }
 
-    private sealed interface VariablesSetter<T> {
+    sealed interface VariablesSetter<T> {
 
         /**
          * Create a composite setter for a collection of variables and their arrays, for speed call the setters directly
@@ -541,7 +541,7 @@ record SchemaBoundRecordReader<T>(SchemaBinding<T> binding) implements NetcdfRec
             public T set(T record, int element) {
 
                 T temp = record;
-                for (int i = 0; i < setters.length; i++) {
+                for (int i = setters.length - 1; i >= 0; i--) {
                     temp = setters[i].set(temp, element, arrays[i]);
                 }
 

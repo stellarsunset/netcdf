@@ -1,7 +1,5 @@
-package com.stellarsunset;
+package com.stellarsunset.netcdf;
 
-import com.stellarsunset.netcdf.NetcdfRecordReader;
-import com.stellarsunset.netcdf.SchemaBinding;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;

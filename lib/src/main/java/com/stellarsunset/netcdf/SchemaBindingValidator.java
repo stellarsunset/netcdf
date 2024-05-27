@@ -15,6 +15,6 @@ record SchemaBindingValidator<T>(NetcdfFile file, SchemaBinding<T> binding) {
     }
 
     private void checkValidity() {
-        
+
     }
 }

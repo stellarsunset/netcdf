@@ -1,4 +1,4 @@
-package com.stellarsunset;
+package com.stellarsunset.netcdf;
 
 import com.stellarsunset.netcdf.NetcdfRecordReader;
 import com.stellarsunset.netcdf.SchemaBinding;

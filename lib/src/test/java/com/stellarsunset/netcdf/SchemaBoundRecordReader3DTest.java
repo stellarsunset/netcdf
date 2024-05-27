@@ -1,7 +1,5 @@
-package com.stellarsunset;
+package com.stellarsunset.netcdf;
 
-import com.stellarsunset.netcdf.NetcdfRecordReader;
-import com.stellarsunset.netcdf.SchemaBinding;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
@@ -19,7 +17,7 @@ import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class SchemaBoundRecordReader4DTest {
+class SchemaBoundRecordReader3DTest {
 
     private static File FILE;
 
@@ -27,7 +25,7 @@ class SchemaBoundRecordReader4DTest {
     static void setup(@TempDir Path temp) {
         FILE = temp.resolve("test-data.nc").toFile();
 
-        var generator = new NetcdfFileGenerator.XYZT(10, 20, 30, 40);
+        var generator = new NetcdfFileGenerator.XYZ(10, 20, 30);
 
         generator.writeVariables(
                 FILE,
@@ -40,119 +38,97 @@ class SchemaBoundRecordReader4DTest {
     @Test
     void test3D_BytesOnly() {
 
-        var binding = SchemaBinding.<Data4D.Builder>builder()
-                .recordSupplier(Data4D::builder)
-                .intDimensionVariable("x", Data4D.Builder::x)
-                .intDimensionVariable("y", Data4D.Builder::y)
-                .intDimensionVariable("z", Data4D.Builder::z)
-                .intDimensionVariable("t", Data4D.Builder::t)
+        var binding = SchemaBinding.<Data3D.Builder>builder()
+                .recordSupplier(Data3D::builder)
+                .intDimensionVariable("x", Data3D.Builder::x)
+                .intDimensionVariable("y", Data3D.Builder::y)
+                .intDimensionVariable("z", Data3D.Builder::z)
                 .byteCoordinateVariable("byte", (b, v) -> b.variable("byte", v))
                 .build();
 
-        List<Data4D> data = readAll(binding);
-        assertEquals(10 * 20 * 30 * 40, data.size(), "Should be an element for each (x,y,z,t) dimension.");
+        List<Data3D> data = readAll(binding);
+        assertEquals(10 * 20 * 30, data.size(), "Should be an element for each (x,y,z) dimension.");
 
-        Data4D first = data.getFirst();
-        Data4D tenth = data.get(10);
-        Data4D twoHundredth = data.get(200);
-        Data4D sixThousandth = data.get(6000);
+        Data3D first = data.getFirst();
+        Data3D tenth = data.get(10);
+        Data3D twoHundredth = data.get(200);
 
         assertAll(
                 () -> assertEquals(0, first.x(), "First X"),
                 () -> assertEquals(0, first.y(), "First Y"),
                 () -> assertEquals(0, first.z(), "First Z"),
-                () -> assertEquals(0, first.t(), "First T"),
                 () -> assertEquals(Set.of("byte"), first.variables().keySet(), "First Variables"),
 
                 () -> assertEquals(0, tenth.x(), "10th X"),
                 () -> assertEquals(1, tenth.y(), "10th Y"),
                 () -> assertEquals(0, tenth.z(), "10th Z"),
-                () -> assertEquals(0, tenth.t(), "10th T"),
                 () -> assertEquals(Set.of("byte"), tenth.variables().keySet(), "10th Variables"),
 
                 () -> assertEquals(0, twoHundredth.x(), "200th X"),
                 () -> assertEquals(0, twoHundredth.y(), "200th Y"),
                 () -> assertEquals(1, twoHundredth.z(), "200th Z"),
-                () -> assertEquals(0, twoHundredth.t(), "200th T"),
-                () -> assertEquals(Set.of("byte"), twoHundredth.variables().keySet(), "200th Variables"),
-
-                () -> assertEquals(0, sixThousandth.x(), "6000th X"),
-                () -> assertEquals(0, sixThousandth.y(), "6000th Y"),
-                () -> assertEquals(0, sixThousandth.z(), "6000th Z"),
-                () -> assertEquals(1, sixThousandth.t(), "6000th T"),
-                () -> assertEquals(Set.of("byte"), sixThousandth.variables().keySet(), "6000th Variables")
+                () -> assertEquals(Set.of("byte"), tenth.variables().keySet(), "200th Variables")
         );
     }
 
     @Test
     void test3D_BytesAndDoubles() {
 
-        var binding = SchemaBinding.<Data4D.Builder>builder()
-                .recordSupplier(Data4D::builder)
-                .intDimensionVariable("x", Data4D.Builder::x)
-                .intDimensionVariable("y", Data4D.Builder::y)
-                .intDimensionVariable("z", Data4D.Builder::z)
-                .intDimensionVariable("t", Data4D.Builder::t)
+        var binding = SchemaBinding.<Data3D.Builder>builder()
+                .recordSupplier(Data3D::builder)
+                .intDimensionVariable("x", Data3D.Builder::x)
+                .intDimensionVariable("y", Data3D.Builder::y)
+                .intDimensionVariable("z", Data3D.Builder::z)
                 .byteCoordinateVariable("byte", (b, v) -> b.variable("byte", v))
                 .intCoordinateVariable("int", (b, v) -> b.variable("int", v))
                 .doubleCoordinateVariable("double", (b, v) -> b.variable("double", v))
                 .build();
 
-        List<Data4D> data = readAll(binding);
-        assertEquals(10 * 20 * 30 * 40, data.size(), "Should be an element for each (x,y,z,t) dimension.");
+        List<Data3D> data = readAll(binding);
+        assertEquals(10 * 20 * 30, data.size(), "Should be an element for each (x,y,z) dimension.");
 
-        Data4D first = data.getFirst();
-        Data4D tenth = data.get(10);
-        Data4D twoHundredth = data.get(200);
-        Data4D sixThousandth = data.get(6000);
+        Data3D first = data.getFirst();
+        Data3D tenth = data.get(10);
+        Data3D twoHundredth = data.get(200);
 
         assertAll(
                 () -> assertEquals(0, first.x(), "First X"),
                 () -> assertEquals(0, first.y(), "First Y"),
                 () -> assertEquals(0, first.z(), "First Z"),
-                () -> assertEquals(0, first.t(), "First T"),
                 () -> assertEquals(Set.of("byte", "int", "double"), first.variables().keySet(), "First Variables"),
 
                 () -> assertEquals(0, tenth.x(), "10th X"),
                 () -> assertEquals(1, tenth.y(), "10th Y"),
                 () -> assertEquals(0, tenth.z(), "10th Z"),
-                () -> assertEquals(0, tenth.t(), "10th T"),
                 () -> assertEquals(Set.of("byte", "int", "double"), tenth.variables().keySet(), "10th Variables"),
 
                 () -> assertEquals(0, twoHundredth.x(), "200th X"),
                 () -> assertEquals(0, twoHundredth.y(), "200th Y"),
                 () -> assertEquals(1, twoHundredth.z(), "200th Z"),
-                () -> assertEquals(0, twoHundredth.t(), "200th T"),
-                () -> assertEquals(Set.of("byte", "int", "double"), twoHundredth.variables().keySet(), "200th Variables"),
-
-                () -> assertEquals(0, sixThousandth.x(), "6000th X"),
-                () -> assertEquals(0, sixThousandth.y(), "6000th Y"),
-                () -> assertEquals(0, sixThousandth.z(), "6000th Z"),
-                () -> assertEquals(1, sixThousandth.t(), "6000th T"),
-                () -> assertEquals(Set.of("byte", "int", "double"), sixThousandth.variables().keySet(), "6000th Variables")
+                () -> assertEquals(Set.of("byte", "int", "double"), tenth.variables().keySet(), "200th Variables")
         );
     }
 
     @Test
     void test3D_OmitDimensions() {
 
-        var binding = SchemaBinding.<Data4D.Builder>builder()
-                .recordSupplier(Data4D::builder)
+        var binding = SchemaBinding.<Data3D.Builder>builder()
+                .recordSupplier(Data3D::builder)
                 .byteCoordinateVariable("byte", (b, v) -> b.variable("byte", v))
                 .build();
 
-        List<Data4D> data = readAll(binding);
-        assertEquals(10 * 20 * 30 * 40, data.size(), "Should be an element for each (x,y,z,t) dimension.");
+        List<Data3D> data = readAll(binding);
+        assertEquals(10 * 20 * 30, data.size(), "Should be an element for each (x,y,z) dimension.");
     }
 
-    private List<Data4D> readAll(SchemaBinding<Data4D.Builder> binding) {
+    private List<Data3D> readAll(SchemaBinding<Data3D.Builder> binding) {
 
         try (NetcdfFile netcdfFile = NetcdfFiles.open(FILE.getAbsolutePath())) {
 
             var reader = NetcdfRecordReader.schemaBound(binding);
 
             return reader.read(netcdfFile)
-                    .map(Data4D.Builder::build)
+                    .map(Data3D.Builder::build)
                     .toList();
 
         } catch (IOException e) {
@@ -161,10 +137,10 @@ class SchemaBoundRecordReader4DTest {
         }
     }
 
-    private record Data4D(int x, int y, int z, int t, Map<String, Object> variables) {
+    private record Data3D(int x, int y, int z, Map<String, Object> variables) {
 
-        private Data4D(Builder builder) {
-            this(builder.x, builder.y, builder.z, builder.t, Map.copyOf(builder.variables));
+        private Data3D(Builder builder) {
+            this(builder.x, builder.y, builder.z, Map.copyOf(builder.variables));
         }
 
         static Builder builder() {
@@ -176,7 +152,6 @@ class SchemaBoundRecordReader4DTest {
             private int x;
             private int y;
             private int z;
-            private int t;
             private final Map<String, Object> variables = new HashMap<>();
 
             private Builder() {
@@ -197,18 +172,13 @@ class SchemaBoundRecordReader4DTest {
                 return this;
             }
 
-            public Builder t(int t) {
-                this.t = t;
-                return this;
-            }
-
             public Builder variable(String name, Object value) {
                 this.variables.put(name, value);
                 return this;
             }
 
-            public Data4D build() {
-                return new Data4D(this);
+            public Data3D build() {
+                return new Data3D(this);
             }
         }
     }
