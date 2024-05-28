@@ -1,4 +1,6 @@
 # NetCDF
+[![Test](https://github.com/stellarsunset/netcdf/actions/workflows/test.yaml/badge.svg)](https://github.com/stellarsunset/netcdf/actions/workflows/test.yaml)
+[![codecov](https://codecov.io/github/stellarsunset/netcdf/graph/badge.svg?token=JIzptwIhbN)](https://codecov.io/github/stellarsunset/netcdf)
 
 A thin wrapper around [NetCDF-Java](https://docs.unidata.ucar.edu/netcdf-java/current/userguide/index.html) for reading sub-schemas of 
 variables into Java objects.
@@ -6,7 +8,7 @@ variables into Java objects.
 ## Motivation
 
 Take for example a simple NetCDF file with the following dimensions and variables:
-```java
+```markdown
 Dimensions
 - x(length=10)
 - y(length=10)

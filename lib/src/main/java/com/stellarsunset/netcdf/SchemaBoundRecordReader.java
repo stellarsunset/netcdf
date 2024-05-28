@@ -228,11 +228,12 @@ record SchemaBoundRecordReader<T>(SchemaBinding<T> binding) implements NetcdfRec
                         dimensionLengths[3],
                         varsSetter
                 );
-                default -> new DN<>(
-                        supplier,
-                        dimensionSetters,
-                        dimensionLengths,
-                        varsSetter
+                default -> throw new IllegalArgumentException(
+                        String.format(
+                                "Currently only optimised readers over up to %s dimensions are supported. Request a D%sIterator.",
+                                4,
+                                dimensionLengths.length
+                        )
                 );
             };
         }
@@ -432,21 +433,6 @@ record SchemaBoundRecordReader<T>(SchemaBinding<T> binding) implements NetcdfRec
 
                 element++;
                 return t;
-            }
-        }
-
-
-        record DN<T>(Supplier<T> supplier, VariablesSetter<T>[] dimSetters, int[] dimensions,
-                     VariablesSetter<T> varsSetter) implements RecordIterator<T> {
-
-            @Override
-            public boolean hasNext() {
-                return false;
-            }
-
-            @Override
-            public T next() {
-                return null;
             }
         }
     }
