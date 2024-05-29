@@ -19,7 +19,7 @@ class SchemaBindingTest {
 
         assertAll(
                 () -> assertEquals(List.of("var"), binding.dimensionToVariables().get("x"), "x->[var]"),
-                () -> assertInstanceOf(ByteSetter.class, binding.dimensionVariables().get("var"), "Should be a ByteSetter")
+                () -> assertInstanceOf(ByteSetter.class, binding.dimensionVariableSetter("var"), "Should be a ByteSetter")
         );
     }
 
@@ -33,7 +33,7 @@ class SchemaBindingTest {
 
         assertAll(
                 () -> assertEquals(List.of("var"), binding.dimensionToVariables().get("x"), "x->[var]"),
-                () -> assertInstanceOf(CharacterSetter.class, binding.dimensionVariables().get("var"), "Should be a CharacterSetter")
+                () -> assertInstanceOf(CharacterSetter.class, binding.dimensionVariableSetter("var"), "Should be a CharacterSetter")
         );
     }
 
@@ -47,7 +47,7 @@ class SchemaBindingTest {
 
         assertAll(
                 () -> assertEquals(List.of("var"), binding.dimensionToVariables().get("x"), "x->[var]"),
-                () -> assertInstanceOf(BooleanSetter.class, binding.dimensionVariables().get("var"), "Should be a BooleanSetter")
+                () -> assertInstanceOf(BooleanSetter.class, binding.dimensionVariableSetter("var"), "Should be a BooleanSetter")
         );
     }
 
@@ -61,7 +61,7 @@ class SchemaBindingTest {
 
         assertAll(
                 () -> assertEquals(List.of("var"), binding.dimensionToVariables().get("x"), "x->[var]"),
-                () -> assertInstanceOf(ShortSetter.class, binding.dimensionVariables().get("var"), "Should be a ShortSetter")
+                () -> assertInstanceOf(ShortSetter.class, binding.dimensionVariableSetter("var"), "Should be a ShortSetter")
         );
     }
 
@@ -75,7 +75,7 @@ class SchemaBindingTest {
 
         assertAll(
                 () -> assertEquals(List.of("var"), binding.dimensionToVariables().get("x"), "x->[var]"),
-                () -> assertInstanceOf(IntSetter.class, binding.dimensionVariables().get("var"), "Should be a IntSetter")
+                () -> assertInstanceOf(IntSetter.class, binding.dimensionVariableSetter("var"), "Should be a IntSetter")
         );
     }
 
@@ -89,7 +89,7 @@ class SchemaBindingTest {
 
         assertAll(
                 () -> assertEquals(List.of("var"), binding.dimensionToVariables().get("x"), "x->[var]"),
-                () -> assertInstanceOf(LongSetter.class, binding.dimensionVariables().get("var"), "Should be a LongSetter")
+                () -> assertInstanceOf(LongSetter.class, binding.dimensionVariableSetter("var"), "Should be a LongSetter")
         );
     }
 
@@ -103,7 +103,7 @@ class SchemaBindingTest {
 
         assertAll(
                 () -> assertEquals(List.of("var"), binding.dimensionToVariables().get("x"), "x->[var]"),
-                () -> assertInstanceOf(FloatSetter.class, binding.dimensionVariables().get("var"), "Should be a FloatSetter")
+                () -> assertInstanceOf(FloatSetter.class, binding.dimensionVariableSetter("var"), "Should be a FloatSetter")
         );
     }
 
@@ -117,7 +117,7 @@ class SchemaBindingTest {
 
         assertAll(
                 () -> assertEquals(List.of("var"), binding.dimensionToVariables().get("x"), "x->[var]"),
-                () -> assertInstanceOf(DoubleSetter.class, binding.dimensionVariables().get("var"), "Should be a DoubleSetter")
+                () -> assertInstanceOf(DoubleSetter.class, binding.dimensionVariableSetter("var"), "Should be a DoubleSetter")
         );
     }
 

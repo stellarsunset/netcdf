@@ -53,4 +53,4 @@ Stream<Measurement> measurements = NetcdfRecordReader.schemaBound(binding).read(
 ### TODOs
 
 - Add support for dimension range restrictions
-- Coordinate transform extractors
+- Coordinate transform extractors (e.g. [lambertian](https://en.wikipedia.org/wiki/Lambert_conformal_conic_projection))
