@@ -1,7 +1,5 @@
 package com.stellarsunset.netcdf;
 
-import com.stellarsunset.netcdf.NetcdfRecordReader;
-import com.stellarsunset.netcdf.SchemaBinding;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import ucar.nc2.NetcdfFile;
@@ -47,11 +45,11 @@ class HrrrTest {
             this(builder.x, builder.y, builder.vil);
         }
 
-        public static Builder builder() {
+        static Builder builder() {
             return new Builder();
         }
 
-        public static final class Builder {
+        static final class Builder {
 
             private float x;
 
@@ -62,22 +60,22 @@ class HrrrTest {
             private Builder() {
             }
 
-            public Builder x(float x) {
+            Builder x(float x) {
                 this.x = x;
                 return this;
             }
 
-            public Builder y(float y) {
+            Builder y(float y) {
                 this.y = y;
                 return this;
             }
 
-            public Builder vil(float vil) {
+            Builder vil(float vil) {
                 this.vil = vil;
                 return this;
             }
 
-            public Vil build() {
+            Vil build() {
                 return new Vil(this);
             }
         }
