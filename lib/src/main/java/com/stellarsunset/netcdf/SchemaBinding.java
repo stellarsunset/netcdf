@@ -5,10 +5,14 @@ import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Multimap;
 import com.stellarsunset.netcdf.field.*;
 
+import java.io.OutputStream;
+import java.io.Writer;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Consumer;
 import java.util.function.Supplier;
+import java.util.stream.Stream;
 
 import static java.util.Objects.requireNonNull;
 import static java.util.Optional.ofNullable;
@@ -57,10 +61,13 @@ import static java.util.Optional.ofNullable;
  *     <li>All coordinate variables share the same common dimensions</li>
  *     <li>Dimension variables match at least one of the shared coordinate variable dimensions</li>
  * </ol>
+ *
+ * <p>Note this binding instance may also be used directly with an {@link OutputStream} template type to directly sink
+ * records to some outbound data stream.
  */
 public final class SchemaBinding<T> {
 
-    private final Supplier<T> recordSupplier;
+    private final Supplier<T> recordInitializer;
 
     private final Multimap<String, String> dimensionToVariables;
 
@@ -68,19 +75,22 @@ public final class SchemaBinding<T> {
 
     private final Map<String, FieldSetter<T>> coordinateVariables;
 
+    private final Consumer<T> recordFinalizer;
+
     private SchemaBinding(Builder<T> builder) {
-        this.recordSupplier = requireNonNull(builder.recordSupplier);
+        this.recordInitializer = requireNonNull(builder.recordInitializer);
         this.dimensionToVariables = ImmutableMultimap.copyOf(builder.dimensionToVariables);
         this.dimensionVariables = Map.copyOf(builder.dimensionVariables);
         this.coordinateVariables = Map.copyOf(builder.coordinateVariables);
+        this.recordFinalizer = requireNonNull(builder.recordFinalizer);
     }
 
     public static <T> Builder<T> builder() {
         return new Builder<>();
     }
 
-    public Supplier<T> recordSupplier() {
-        return recordSupplier;
+    public Supplier<T> recordInitializer() {
+        return recordInitializer;
     }
 
     public Multimap<String, String> dimensionToVariables() {
@@ -107,12 +117,13 @@ public final class SchemaBinding<T> {
         return ofNullable(coordinateVariables.get(variableName)).orElseGet(NoopSetter::new);
     }
 
-    public record DimensionVariable(String dimensionName, String variableName) {
+    public Consumer<T> recordFinalizer() {
+        return recordFinalizer;
     }
 
     public static final class Builder<T> {
 
-        private Supplier<T> recordSupplier;
+        private Supplier<T> recordInitializer;
 
         private final Multimap<String, String> dimensionToVariables = HashMultimap.create();
 
@@ -120,11 +131,23 @@ public final class SchemaBinding<T> {
 
         private final Map<String, FieldSetter<T>> coordinateVariables = new HashMap<>();
 
+        private Consumer<T> recordFinalizer = record -> {
+        };
+
         private Builder() {
         }
 
-        public Builder<T> recordSupplier(Supplier<T> recordSupplier) {
-            this.recordSupplier = requireNonNull(recordSupplier);
+        /**
+         * Initialization method for getting a new instance of a record of type {@link T} that the dimension/coordinate
+         * variable binding operations can then be called against.
+         *
+         * <p>Usually this is some form of {@code new T.Builder();}, but for bindings that directly pipe fields into an
+         * {@link OutputStream} this may simply return the same shared output stream instance.
+         *
+         * @param recordInitializer called to initialize a new record to bind the netcdf-provided fields into
+         */
+        public Builder<T> recordInitializer(Supplier<T> recordInitializer) {
+            this.recordInitializer = requireNonNull(recordInitializer);
             return this;
         }
 
@@ -245,6 +268,22 @@ public final class SchemaBinding<T> {
 
         public Builder<T> doubleCoordinateVariable(String name, DoubleSetter<T> setter) {
             this.coordinateVariables.put(name, setter);
+            return this;
+        }
+
+        /**
+         * Optional finalization operation that well be called under the hood before the record is made available in the
+         * {@link Stream} output of the {@link NetcdfRecordReader}.
+         *
+         * <p>This hook is primarily useful when the template type of the binding is flavor of {@link OutputStream} or a
+         * {@link Writer} implementation and data returned from the file is being directly re-written to that stream but
+         * may need a record termination indicator, e.g. a closing brace for a JSON-based output stream or a newline for
+         * a plain text based one.
+         *
+         * @param recordFinalizer "finalizer" operation to run after the various variable bindings have been invoked
+         */
+        public Builder<T> recordFinalizer(Consumer<T> recordFinalizer) {
+            this.recordFinalizer = requireNonNull(recordFinalizer);
             return this;
         }
 

@@ -39,7 +39,7 @@ class SchemaBoundRecordReader2DTest {
     void test2D_BytesOnly() {
 
         var binding = SchemaBinding.<Data2D.Builder>builder()
-                .recordSupplier(Data2D::builder)
+                .recordInitializer(Data2D::builder)
                 .intDimensionVariable("x", Data2D.Builder::x)
                 .intDimensionVariable("y", Data2D.Builder::y)
                 .byteCoordinateVariable("byte", (b, v) -> b.variable("byte", v))
@@ -66,7 +66,7 @@ class SchemaBoundRecordReader2DTest {
     void test2D_BytesAndDoubles() {
 
         var binding = SchemaBinding.<Data2D.Builder>builder()
-                .recordSupplier(Data2D::builder)
+                .recordInitializer(Data2D::builder)
                 .intDimensionVariable("x", Data2D.Builder::x)
                 .intDimensionVariable("y", Data2D.Builder::y)
                 .byteCoordinateVariable("byte", (b, v) -> b.variable("byte", v))
@@ -95,7 +95,7 @@ class SchemaBoundRecordReader2DTest {
     void test2D_OmitDimensions() {
 
         var binding = SchemaBinding.<Data2D.Builder>builder()
-                .recordSupplier(Data2D::builder)
+                .recordInitializer(Data2D::builder)
                 .byteCoordinateVariable("byte", (b, v) -> b.variable("byte", v))
                 .build();
 

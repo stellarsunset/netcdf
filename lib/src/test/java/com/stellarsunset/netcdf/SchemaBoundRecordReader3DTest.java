@@ -39,7 +39,7 @@ class SchemaBoundRecordReader3DTest {
     void test3D_BytesOnly() {
 
         var binding = SchemaBinding.<Data3D.Builder>builder()
-                .recordSupplier(Data3D::builder)
+                .recordInitializer(Data3D::builder)
                 .intDimensionVariable("x", Data3D.Builder::x)
                 .intDimensionVariable("y", Data3D.Builder::y)
                 .intDimensionVariable("z", Data3D.Builder::z)
@@ -75,7 +75,7 @@ class SchemaBoundRecordReader3DTest {
     void test3D_BytesAndDoubles() {
 
         var binding = SchemaBinding.<Data3D.Builder>builder()
-                .recordSupplier(Data3D::builder)
+                .recordInitializer(Data3D::builder)
                 .intDimensionVariable("x", Data3D.Builder::x)
                 .intDimensionVariable("y", Data3D.Builder::y)
                 .intDimensionVariable("z", Data3D.Builder::z)
@@ -113,7 +113,7 @@ class SchemaBoundRecordReader3DTest {
     void test3D_OmitDimensions() {
 
         var binding = SchemaBinding.<Data3D.Builder>builder()
-                .recordSupplier(Data3D::builder)
+                .recordInitializer(Data3D::builder)
                 .byteCoordinateVariable("byte", (b, v) -> b.variable("byte", v))
                 .build();
 

@@ -54,7 +54,7 @@ Stream<Measurement> measurements = NetcdfRecordReader.schemaBound(binding).read(
 
 - To resolve the transitive ucar dependencies you'll need to configure their repository as a source (see
   the `lib/build.gradle.kts` of this project)
-- This repo is published under the artifact `io.github.stellarsunset:netcdf`, see releases for versions
+- This repo is published to maven central as `io.github.stellarsunset:netcdf`, see releases for versions
 - The additional Java artifacts for reading alternate file types can be
   found [on the ucar site](https://docs.unidata.ucar.edu/netcdf-java/current/userguide/using_netcdf_java_artifacts.html)
 

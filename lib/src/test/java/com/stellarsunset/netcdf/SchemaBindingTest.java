@@ -13,7 +13,7 @@ class SchemaBindingTest {
     void testByteDimensionVariable() {
 
         SchemaBinding<String> binding = SchemaBinding.<String>builder()
-                .recordSupplier(() -> "")
+                .recordInitializer(() -> "")
                 .byteDimensionVariable("x", "var", (s, v) -> s + v)
                 .build();
 
@@ -27,7 +27,7 @@ class SchemaBindingTest {
     void testCharacterDimensionVariable() {
 
         SchemaBinding<String> binding = SchemaBinding.<String>builder()
-                .recordSupplier(() -> "")
+                .recordInitializer(() -> "")
                 .charDimensionVariable("x", "var", (s, v) -> s + v)
                 .build();
 
@@ -41,7 +41,7 @@ class SchemaBindingTest {
     void testBooleanDimensionVariable() {
 
         SchemaBinding<String> binding = SchemaBinding.<String>builder()
-                .recordSupplier(() -> "")
+                .recordInitializer(() -> "")
                 .booleanDimensionVariable("x", "var", (s, v) -> s + v)
                 .build();
 
@@ -55,7 +55,7 @@ class SchemaBindingTest {
     void testShortDimensionVariable() {
 
         SchemaBinding<String> binding = SchemaBinding.<String>builder()
-                .recordSupplier(() -> "")
+                .recordInitializer(() -> "")
                 .shortDimensionVariable("x", "var", (s, v) -> s + v)
                 .build();
 
@@ -69,7 +69,7 @@ class SchemaBindingTest {
     void testIntDimensionVariable() {
 
         SchemaBinding<String> binding = SchemaBinding.<String>builder()
-                .recordSupplier(() -> "")
+                .recordInitializer(() -> "")
                 .intDimensionVariable("x", "var", (s, v) -> s + v)
                 .build();
 
@@ -83,7 +83,7 @@ class SchemaBindingTest {
     void testLongDimensionVariable() {
 
         SchemaBinding<String> binding = SchemaBinding.<String>builder()
-                .recordSupplier(() -> "")
+                .recordInitializer(() -> "")
                 .longDimensionVariable("x", "var", (s, v) -> s + v)
                 .build();
 
@@ -97,7 +97,7 @@ class SchemaBindingTest {
     void testFloatDimensionVariable() {
 
         SchemaBinding<String> binding = SchemaBinding.<String>builder()
-                .recordSupplier(() -> "")
+                .recordInitializer(() -> "")
                 .floatDimensionVariable("x", "var", (s, v) -> s + v)
                 .build();
 
@@ -111,7 +111,7 @@ class SchemaBindingTest {
     void testDoubleDimensionVariable() {
 
         SchemaBinding<String> binding = SchemaBinding.<String>builder()
-                .recordSupplier(() -> "")
+                .recordInitializer(() -> "")
                 .doubleDimensionVariable("x", "var", (s, v) -> s + v)
                 .build();
 
@@ -125,7 +125,7 @@ class SchemaBindingTest {
     void testByteCoordinateVariable() {
 
         SchemaBinding<String> binding = SchemaBinding.<String>builder()
-                .recordSupplier(() -> "")
+                .recordInitializer(() -> "")
                 .byteCoordinateVariable("var", (s, v) -> s + v)
                 .build();
 
@@ -136,7 +136,7 @@ class SchemaBindingTest {
     void testCharacterCoordinateVariable() {
 
         SchemaBinding<String> binding = SchemaBinding.<String>builder()
-                .recordSupplier(() -> "")
+                .recordInitializer(() -> "")
                 .charCoordinateVariable("var", (s, v) -> s + v)
                 .build();
 
@@ -147,7 +147,7 @@ class SchemaBindingTest {
     void testBooleanCoordinateVariable() {
 
         SchemaBinding<String> binding = SchemaBinding.<String>builder()
-                .recordSupplier(() -> "")
+                .recordInitializer(() -> "")
                 .booleanCoordinateVariable("var", (s, v) -> s + v)
                 .build();
 
@@ -158,7 +158,7 @@ class SchemaBindingTest {
     void testShortCoordinateVariable() {
 
         SchemaBinding<String> binding = SchemaBinding.<String>builder()
-                .recordSupplier(() -> "")
+                .recordInitializer(() -> "")
                 .shortCoordinateVariable("var", (s, v) -> s + v)
                 .build();
 
@@ -169,7 +169,7 @@ class SchemaBindingTest {
     void testIntCoordinateVariable() {
 
         SchemaBinding<String> binding = SchemaBinding.<String>builder()
-                .recordSupplier(() -> "")
+                .recordInitializer(() -> "")
                 .intCoordinateVariable("var", (s, v) -> s + v)
                 .build();
 
@@ -180,7 +180,7 @@ class SchemaBindingTest {
     void testLongCoordinateVariable() {
 
         SchemaBinding<String> binding = SchemaBinding.<String>builder()
-                .recordSupplier(() -> "")
+                .recordInitializer(() -> "")
                 .longCoordinateVariable("var", (s, v) -> s + v)
                 .build();
 
@@ -191,7 +191,7 @@ class SchemaBindingTest {
     void testFloatCoordinateVariable() {
 
         SchemaBinding<String> binding = SchemaBinding.<String>builder()
-                .recordSupplier(() -> "")
+                .recordInitializer(() -> "")
                 .floatCoordinateVariable("var", (s, v) -> s + v)
                 .build();
 
@@ -202,7 +202,7 @@ class SchemaBindingTest {
     void testDoubleCoordinateVariable() {
 
         SchemaBinding<String> binding = SchemaBinding.<String>builder()
-                .recordSupplier(() -> "")
+                .recordInitializer(() -> "")
                 .doubleCoordinateVariable("var", (s, v) -> s + v)
                 .build();
 

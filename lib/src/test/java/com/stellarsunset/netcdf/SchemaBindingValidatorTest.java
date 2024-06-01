@@ -43,7 +43,7 @@ class SchemaBindingValidatorTest {
     void testMissingCoordinateVariable() {
 
         SchemaBinding<String> binding = SchemaBinding.<String>builder()
-                .recordSupplier(() -> "")
+                .recordInitializer(() -> "")
                 .intCoordinateVariable("fake", (b, v) -> b + v)
                 .build();
 
@@ -55,7 +55,7 @@ class SchemaBindingValidatorTest {
     void testBadCoordinateVariableType() {
 
         SchemaBinding<String> binding = SchemaBinding.<String>builder()
-                .recordSupplier(() -> "")
+                .recordInitializer(() -> "")
                 .shortCoordinateVariable("xy", (b, v) -> b + v)
                 .build();
 
@@ -67,7 +67,7 @@ class SchemaBindingValidatorTest {
     void testMissingDimensionVariable() {
 
         SchemaBinding<String> binding = SchemaBinding.<String>builder()
-                .recordSupplier(() -> "")
+                .recordInitializer(() -> "")
                 .intDimensionVariable("x", "fake", (b, v) -> b + v)
                 .intCoordinateVariable("xy", (b, v) -> b + v)
                 .build();
@@ -80,7 +80,7 @@ class SchemaBindingValidatorTest {
     void testBadDimensionVariableType() {
 
         SchemaBinding<String> binding = SchemaBinding.<String>builder()
-                .recordSupplier(() -> "")
+                .recordInitializer(() -> "")
                 .shortDimensionVariable("x", "x", (b, v) -> b + v)
                 .intCoordinateVariable("xy", (b, v) -> b + v)
                 .build();
@@ -93,7 +93,7 @@ class SchemaBindingValidatorTest {
     void testMismatchedCoordinateVariableDimensions() {
 
         SchemaBinding<String> binding = SchemaBinding.<String>builder()
-                .recordSupplier(() -> "")
+                .recordInitializer(() -> "")
                 .intCoordinateVariable("x", (b, v) -> b + v)
                 .intCoordinateVariable("xy", (b, y) -> b + y)
                 .build();
@@ -111,7 +111,7 @@ class SchemaBindingValidatorTest {
     void testMismatchedDimensionVariableDimensions() {
 
         SchemaBinding<String> binding = SchemaBinding.<String>builder()
-                .recordSupplier(() -> "")
+                .recordInitializer(() -> "")
                 .intDimensionVariable("z", "z", (b, v) -> b + v)
                 .intCoordinateVariable("xy", (b, v) -> b + v)
                 .build();

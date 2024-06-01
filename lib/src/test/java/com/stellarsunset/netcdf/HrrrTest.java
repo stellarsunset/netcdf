@@ -21,7 +21,7 @@ class HrrrTest {
         try (NetcdfFile netcdfFile = NetcdfFiles.open(file)) {
 
             var binding = SchemaBinding.<Vil.Builder>builder()
-                    .recordSupplier(Vil::builder)
+                    .recordInitializer(Vil::builder)
                     .floatDimensionVariable("x", Vil.Builder::x)
                     .floatDimensionVariable("y", Vil.Builder::y)
                     .floatCoordinateVariable("Vertically_integrated_liquid_water_VIL_entire_atmosphere", Vil.Builder::vil)
