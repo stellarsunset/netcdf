@@ -151,52 +151,54 @@ public final class SchemaBinding<T> {
             return this;
         }
 
-        public Builder<T> byteDimensionVariable(String dimensionName, String variableName, ByteSetter<T> setter) {
+        /**
+         * Configure an object binding for the provided dimension variable varying across the given dimension, e.g. the
+         * latitude variable varying along the 'x' dimension.
+         *
+         * <p>See the top-level Javadocs for a full description.
+         *
+         * <p>This is a less type-safe version of the well-named setters that may be more suitable in some situations.
+         *
+         * @param dimensionName the name of the single dimension the variable varies across
+         * @param variableName  the name of the variable whose values we want to bind into the record
+         * @param setter        the setter to use when binding the variable values to the object
+         */
+        public Builder<T> dimensionVariable(String dimensionName, String variableName, FieldSetter<T> setter) {
             this.dimensionToVariables.put(dimensionName, variableName);
             this.dimensionVariables.put(variableName, setter);
             return this;
+        }
+
+        public Builder<T> byteDimensionVariable(String dimensionName, String variableName, ByteSetter<T> setter) {
+            return dimensionVariable(dimensionName, variableName, setter);
         }
 
         public Builder<T> charDimensionVariable(String dimensionName, String variableName, CharacterSetter<T> setter) {
-            this.dimensionToVariables.put(dimensionName, variableName);
-            this.dimensionVariables.put(variableName, setter);
-            return this;
+            return dimensionVariable(dimensionName, variableName, setter);
         }
 
         public Builder<T> booleanDimensionVariable(String dimensionName, String variableName, BooleanSetter<T> setter) {
-            this.dimensionToVariables.put(dimensionName, variableName);
-            this.dimensionVariables.put(variableName, setter);
-            return this;
+            return dimensionVariable(dimensionName, variableName, setter);
         }
 
         public Builder<T> shortDimensionVariable(String dimensionName, String variableName, ShortSetter<T> setter) {
-            this.dimensionToVariables.put(dimensionName, variableName);
-            this.dimensionVariables.put(variableName, setter);
-            return this;
+            return dimensionVariable(dimensionName, variableName, setter);
         }
 
         public Builder<T> intDimensionVariable(String dimensionName, String variableName, IntSetter<T> setter) {
-            this.dimensionToVariables.put(dimensionName, variableName);
-            this.dimensionVariables.put(variableName, setter);
-            return this;
+            return dimensionVariable(dimensionName, variableName, setter);
         }
 
         public Builder<T> longDimensionVariable(String dimensionName, String variableName, LongSetter<T> setter) {
-            this.dimensionToVariables.put(dimensionName, variableName);
-            this.dimensionVariables.put(variableName, setter);
-            return this;
+            return dimensionVariable(dimensionName, variableName, setter);
         }
 
         public Builder<T> floatDimensionVariable(String dimensionName, String variableName, FloatSetter<T> setter) {
-            this.dimensionToVariables.put(dimensionName, variableName);
-            this.dimensionVariables.put(variableName, setter);
-            return this;
+            return dimensionVariable(dimensionName, variableName, setter);
         }
 
         public Builder<T> doubleDimensionVariable(String dimensionName, String variableName, DoubleSetter<T> setter) {
-            this.dimensionToVariables.put(dimensionName, variableName);
-            this.dimensionVariables.put(variableName, setter);
-            return this;
+            return dimensionVariable(dimensionName, variableName, setter);
         }
 
         public Builder<T> byteDimensionVariable(String dimensionName, ByteSetter<T> setter) {
@@ -231,44 +233,51 @@ public final class SchemaBinding<T> {
             return doubleDimensionVariable(dimensionName, dimensionName, setter);
         }
 
-        public Builder<T> byteCoordinateVariable(String name, ByteSetter<T> setter) {
+        /**
+         * Configure an object binding for the provided coordinate variable varying.
+         *
+         * <p>See the top-level Javadocs for a full description.
+         *
+         * <p>This is a less type-safe version of the well-named setters that may be more suitable in some situations.
+         *
+         * @param name   the name of the variable whose values we want to bind into the record
+         * @param setter the setter to use when binding the variable values to the object
+         */
+        public Builder<T> coordinateVariable(String name, FieldSetter<T> setter) {
             this.coordinateVariables.put(name, setter);
             return this;
+        }
+
+        public Builder<T> byteCoordinateVariable(String name, ByteSetter<T> setter) {
+            return coordinateVariable(name, setter);
         }
 
         public Builder<T> charCoordinateVariable(String name, CharacterSetter<T> setter) {
-            this.coordinateVariables.put(name, setter);
-            return this;
+            return coordinateVariable(name, setter);
         }
 
         public Builder<T> booleanCoordinateVariable(String name, BooleanSetter<T> setter) {
-            this.coordinateVariables.put(name, setter);
-            return this;
+            return coordinateVariable(name, setter);
         }
 
         public Builder<T> shortCoordinateVariable(String name, ShortSetter<T> setter) {
-            this.coordinateVariables.put(name, setter);
-            return this;
+            return coordinateVariable(name, setter);
         }
 
         public Builder<T> intCoordinateVariable(String name, IntSetter<T> setter) {
-            this.coordinateVariables.put(name, setter);
-            return this;
+            return coordinateVariable(name, setter);
         }
 
         public Builder<T> longCoordinateVariable(String name, LongSetter<T> setter) {
-            this.coordinateVariables.put(name, setter);
-            return this;
+            return coordinateVariable(name, setter);
         }
 
         public Builder<T> floatCoordinateVariable(String name, FloatSetter<T> setter) {
-            this.coordinateVariables.put(name, setter);
-            return this;
+            return coordinateVariable(name, setter);
         }
 
         public Builder<T> doubleCoordinateVariable(String name, DoubleSetter<T> setter) {
-            this.coordinateVariables.put(name, setter);
-            return this;
+            return coordinateVariable(name, setter);
         }
 
         /**

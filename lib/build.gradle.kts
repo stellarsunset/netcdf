@@ -26,8 +26,6 @@ dependencies {
 
     testImplementation(libs.junit.jupiter)
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
-
-    //testRuntimeOnly(libs.grib)
 }
 
 java {
@@ -58,7 +56,7 @@ mavenPublishing {
 
     publishToMavenCentral(SonatypeHost.CENTRAL_PORTAL, automaticRelease = true)
 
-    coordinates("io.github.stellarsunset", "netcdf", "0.0.1")
+    coordinates("io.github.stellarsunset", "netcdf", "0.0.2")
 
     pom {
         name = "netcdf"
