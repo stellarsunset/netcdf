@@ -98,6 +98,12 @@ record SchemaBoundRecordReader<T>(SchemaBinding<T> binding) implements NetcdfRec
      */
     interface Setter<T> {
 
+        final class SetFieldException extends RuntimeException {
+            SetFieldException(String message, IOException e) {
+                super(message, e);
+            }
+        }
+
         static <T> Setter<T> noop() {
             return new Noop<>();
         }
@@ -128,56 +134,88 @@ record SchemaBoundRecordReader<T>(SchemaBinding<T> binding) implements NetcdfRec
         record Byte<T>(ByteSetter<T> bs) implements Setter<T> {
             @Override
             public T set(T record, int element, Array data) {
-                return bs.accept(record, data.getByte(element));
+                try {
+                    return bs.accept(record, data.getByte(element));
+                } catch (IOException e) {
+                    throw new SetFieldException("Error setting byte field at offset: " + element, e);
+                }
             }
         }
 
         record Character<T>(CharacterSetter<T> cs) implements Setter<T> {
             @Override
             public T set(T record, int element, Array data) {
-                return cs.accept(record, data.getChar(element));
+                try {
+                    return cs.accept(record, data.getChar(element));
+                } catch (IOException e) {
+                    throw new SetFieldException("Error setting char field at offset: " + element, e);
+                }
             }
         }
 
         record Boolean<T>(BooleanSetter<T> bs) implements Setter<T> {
             @Override
             public T set(T record, int element, Array data) {
-                return bs.accept(record, data.getBoolean(element));
+                try {
+                    return bs.accept(record, data.getBoolean(element));
+                } catch (IOException e) {
+                    throw new SetFieldException("Error setting boolean field at offset: " + element, e);
+                }
             }
         }
 
         record Short<T>(ShortSetter<T> ss) implements Setter<T> {
             @Override
             public T set(T record, int element, Array data) {
-                return ss.accept(record, data.getShort(element));
+                try {
+                    return ss.accept(record, data.getShort(element));
+                } catch (IOException e) {
+                    throw new SetFieldException("Error setting short field at offset: " + element, e);
+                }
             }
         }
 
         record Int<T>(IntSetter<T> is) implements Setter<T> {
             @Override
             public T set(T record, int element, Array data) {
-                return is.accept(record, data.getInt(element));
+                try {
+                    return is.accept(record, data.getInt(element));
+                } catch (IOException e) {
+                    throw new SetFieldException("Error setting int field at offset: " + element, e);
+                }
             }
         }
 
         record Long<T>(LongSetter<T> ls) implements Setter<T> {
             @Override
             public T set(T record, int element, Array data) {
-                return ls.accept(record, data.getLong(element));
+                try {
+                    return ls.accept(record, data.getLong(element));
+                } catch (IOException e) {
+                    throw new SetFieldException("Error setting long field at offset: " + element, e);
+                }
             }
         }
 
         record Float<T>(FloatSetter<T> fs) implements Setter<T> {
             @Override
             public T set(T record, int element, Array data) {
-                return fs.accept(record, data.getFloat(element));
+                try {
+                    return fs.accept(record, data.getFloat(element));
+                } catch (IOException e) {
+                    throw new SetFieldException("Error setting long field at offset: " + element, e);
+                }
             }
         }
 
         record Double<T>(DoubleSetter<T> ds) implements Setter<T> {
             @Override
             public T set(T record, int element, Array data) {
-                return ds.accept(record, data.getDouble(element));
+                try {
+                    return ds.accept(record, data.getDouble(element));
+                } catch (IOException e) {
+                    throw new SetFieldException("Error setting double field at offset: " + element, e);
+                }
             }
         }
     }
@@ -187,7 +225,7 @@ record SchemaBoundRecordReader<T>(SchemaBinding<T> binding) implements NetcdfRec
         /**
          * Create a new record iterator which returns a lazy sequence of records pulled from the underlying cdm data.
          *
-         * @param initializer         supplier for new record instances to call setters against
+         * @param initializer      supplier for new record instances to call setters against
          * @param dimensionSetters setters on the objects for dimension values
          * @param dimensionLengths the length of each dimension
          * @param varsSetter       setter for injecting the variable value at the dimension coordinates into the record
