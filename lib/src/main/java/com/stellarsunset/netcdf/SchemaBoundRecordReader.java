@@ -78,11 +78,11 @@ record SchemaBoundRecordReader<T>(SchemaBinding<T> binding) implements NetcdfRec
         }
 
         RecordIterator<T> iterator = RecordIterator.from(
-                binding().recordInitializer(),
+                asSupplier(binding().recordInitializer()),
                 dimensionsSetters,
                 dimensionLengths,
                 coordinatesSetter,
-                binding().recordFinalizer()
+                asConsumer(binding().recordFinalizer())
         );
 
         return StreamSupport.stream(
@@ -91,18 +91,41 @@ record SchemaBoundRecordReader<T>(SchemaBinding<T> binding) implements NetcdfRec
         );
     }
 
+    private Supplier<T> asSupplier(RecordInitializer<T> initializer) {
+        return () -> {
+            try {
+                return initializer.get();
+            } catch (IOException e) {
+                throw new RecordCreationException("Error initializing record.", e);
+            }
+        };
+    }
+
+    private Consumer<T> asConsumer(RecordFinalizer<T> finalizer) {
+        return record -> {
+            try {
+                finalizer.accept(record);
+            } catch (IOException e) {
+                throw new RecordCreationException("Error finalizing record.", e);
+            }
+        };
+    }
+
+    /**
+     * Dedicated runtime exception class for issues encountered when streaming records out of a netcdf file.
+     */
+    static final class RecordCreationException extends RuntimeException {
+        RecordCreationException(String message, IOException e) {
+            super(message, e);
+        }
+    }
+
     /**
      * Internal setter interface to wrap the client-facing {@link FieldSetter} types and hide them from the internals of the read operation.
      *
      * <p>These setters need to encapsulate the boolean/character/etc. read operations.
      */
     interface Setter<T> {
-
-        final class SetFieldException extends RuntimeException {
-            SetFieldException(String message, IOException e) {
-                super(message, e);
-            }
-        }
 
         static <T> Setter<T> noop() {
             return new Noop<>();
@@ -137,7 +160,7 @@ record SchemaBoundRecordReader<T>(SchemaBinding<T> binding) implements NetcdfRec
                 try {
                     return bs.accept(record, data.getByte(element));
                 } catch (IOException e) {
-                    throw new SetFieldException("Error setting byte field at offset: " + element, e);
+                    throw new RecordCreationException("Error setting byte field at offset: " + element, e);
                 }
             }
         }
@@ -148,7 +171,7 @@ record SchemaBoundRecordReader<T>(SchemaBinding<T> binding) implements NetcdfRec
                 try {
                     return cs.accept(record, data.getChar(element));
                 } catch (IOException e) {
-                    throw new SetFieldException("Error setting char field at offset: " + element, e);
+                    throw new RecordCreationException("Error setting char field at offset: " + element, e);
                 }
             }
         }
@@ -159,7 +182,7 @@ record SchemaBoundRecordReader<T>(SchemaBinding<T> binding) implements NetcdfRec
                 try {
                     return bs.accept(record, data.getBoolean(element));
                 } catch (IOException e) {
-                    throw new SetFieldException("Error setting boolean field at offset: " + element, e);
+                    throw new RecordCreationException("Error setting boolean field at offset: " + element, e);
                 }
             }
         }
@@ -170,7 +193,7 @@ record SchemaBoundRecordReader<T>(SchemaBinding<T> binding) implements NetcdfRec
                 try {
                     return ss.accept(record, data.getShort(element));
                 } catch (IOException e) {
-                    throw new SetFieldException("Error setting short field at offset: " + element, e);
+                    throw new RecordCreationException("Error setting short field at offset: " + element, e);
                 }
             }
         }
@@ -181,7 +204,7 @@ record SchemaBoundRecordReader<T>(SchemaBinding<T> binding) implements NetcdfRec
                 try {
                     return is.accept(record, data.getInt(element));
                 } catch (IOException e) {
-                    throw new SetFieldException("Error setting int field at offset: " + element, e);
+                    throw new RecordCreationException("Error setting int field at offset: " + element, e);
                 }
             }
         }
@@ -192,7 +215,7 @@ record SchemaBoundRecordReader<T>(SchemaBinding<T> binding) implements NetcdfRec
                 try {
                     return ls.accept(record, data.getLong(element));
                 } catch (IOException e) {
-                    throw new SetFieldException("Error setting long field at offset: " + element, e);
+                    throw new RecordCreationException("Error setting long field at offset: " + element, e);
                 }
             }
         }
@@ -203,7 +226,7 @@ record SchemaBoundRecordReader<T>(SchemaBinding<T> binding) implements NetcdfRec
                 try {
                     return fs.accept(record, data.getFloat(element));
                 } catch (IOException e) {
-                    throw new SetFieldException("Error setting long field at offset: " + element, e);
+                    throw new RecordCreationException("Error setting long field at offset: " + element, e);
                 }
             }
         }
@@ -214,7 +237,7 @@ record SchemaBoundRecordReader<T>(SchemaBinding<T> binding) implements NetcdfRec
                 try {
                     return ds.accept(record, data.getDouble(element));
                 } catch (IOException e) {
-                    throw new SetFieldException("Error setting double field at offset: " + element, e);
+                    throw new RecordCreationException("Error setting double field at offset: " + element, e);
                 }
             }
         }

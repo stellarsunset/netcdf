@@ -10,8 +10,6 @@ import java.io.Writer;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.Consumer;
-import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 import static java.util.Objects.requireNonNull;
@@ -67,7 +65,7 @@ import static java.util.Optional.ofNullable;
  */
 public final class SchemaBinding<T> {
 
-    private final Supplier<T> recordInitializer;
+    private final RecordInitializer<T> recordInitializer;
 
     private final Multimap<String, String> dimensionToVariables;
 
@@ -75,7 +73,7 @@ public final class SchemaBinding<T> {
 
     private final Map<String, FieldSetter<T>> coordinateVariables;
 
-    private final Consumer<T> recordFinalizer;
+    private final RecordFinalizer<T> recordFinalizer;
 
     private SchemaBinding(Builder<T> builder) {
         this.recordInitializer = requireNonNull(builder.recordInitializer);
@@ -89,7 +87,7 @@ public final class SchemaBinding<T> {
         return new Builder<>();
     }
 
-    public Supplier<T> recordInitializer() {
+    public RecordInitializer<T> recordInitializer() {
         return recordInitializer;
     }
 
@@ -117,13 +115,13 @@ public final class SchemaBinding<T> {
         return ofNullable(coordinateVariables.get(variableName)).orElseGet(NoopSetter::new);
     }
 
-    public Consumer<T> recordFinalizer() {
+    public RecordFinalizer<T> recordFinalizer() {
         return recordFinalizer;
     }
 
     public static final class Builder<T> {
 
-        private Supplier<T> recordInitializer;
+        private RecordInitializer<T> recordInitializer;
 
         private final Multimap<String, String> dimensionToVariables = HashMultimap.create();
 
@@ -131,7 +129,7 @@ public final class SchemaBinding<T> {
 
         private final Map<String, FieldSetter<T>> coordinateVariables = new HashMap<>();
 
-        private Consumer<T> recordFinalizer = record -> {
+        private RecordFinalizer<T> recordFinalizer = record -> {
         };
 
         private Builder() {
@@ -146,7 +144,7 @@ public final class SchemaBinding<T> {
          *
          * @param recordInitializer called to initialize a new record to bind the netcdf-provided fields into
          */
-        public Builder<T> recordInitializer(Supplier<T> recordInitializer) {
+        public Builder<T> recordInitializer(RecordInitializer<T> recordInitializer) {
             this.recordInitializer = requireNonNull(recordInitializer);
             return this;
         }
@@ -291,7 +289,7 @@ public final class SchemaBinding<T> {
          *
          * @param recordFinalizer "finalizer" operation to run after the various variable bindings have been invoked
          */
-        public Builder<T> recordFinalizer(Consumer<T> recordFinalizer) {
+        public Builder<T> recordFinalizer(RecordFinalizer<T> recordFinalizer) {
             this.recordFinalizer = requireNonNull(recordFinalizer);
             return this;
         }
