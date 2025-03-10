@@ -53,7 +53,8 @@ public sealed interface Array {
     sealed interface D1 extends Array {
 
         record Byte(ArrayByte.D1 delegate) implements D1 {
-            byte read(int i) {
+
+            public byte read(int i) {
                 return delegate.get(i);
             }
         }

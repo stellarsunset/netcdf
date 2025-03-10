@@ -15,22 +15,7 @@ import java.util.function.Supplier;
 
 record SchemaBoundHyperCubeMaker<T>() {
 
-    sealed interface D4Binding<T> {
-
-        static <T> D4Binding<T> from(FieldSetter<T> setter, com.stellarsunset.netcdf.Array.D4 array) {
-            return null;
-        }
-
-        T bindValue(T obj, int d0, int d1, int d2, int d3);
-
-        record Byte<T>(ByteSetter<T> setter, com.stellarsunset.netcdf.Array.D4.Byte array) implements D4Binding<T>{
-
-            @Override
-            public T bindValue(T obj, int d0, int d1, int d2, int d3) {
-                return setter.accept(obj, array.read(d0,d1,d2,d3));
-            }
-        }
-    }
+    private static class MismatchedBindingTypeException {}
 
     private static <T> Hypercube.D4<T> makeD4(NetcdfFile file, SchemaBinding<T> binding) {
         return null;
@@ -51,7 +36,10 @@ record SchemaBoundHyperCubeMaker<T>() {
             Variable variable = file.findVariable(entry.getKey());
 
             coordinateSetters.add(Setter.from(entry.getValue()));
-            coordinateArrays.add(variable.read().reduce()); // reduce any dimensions of length 1
+            var array = com.stellarsunset.netcdf.Array.wrap(variable.read().reduce());
+            switch (array) {
+
+            }
         }
 
         VariablesSetter<T> coordinatesSetter = VariablesSetter.from(
