@@ -2,11 +2,10 @@ package com.stellarsunset.netcdf;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
-import com.stellarsunset.netcdf.SchemaBindingValidator.Error.IncorrectVariableType;
-import com.stellarsunset.netcdf.SchemaBindingValidator.Error.MismatchedCoordinateVariableDimensions;
-import com.stellarsunset.netcdf.SchemaBindingValidator.Error.MismatchedDimensionVariableDimensions;
-import com.stellarsunset.netcdf.SchemaBindingValidator.Error.MissingVariable;
-import com.stellarsunset.netcdf.field.ShortSetter;
+import com.stellarsunset.netcdf.ValidatedBinding.Validator.Error.IncorrectVariableType;
+import com.stellarsunset.netcdf.ValidatedBinding.Validator.Error.MismatchedCoordinateVariableDimensions;
+import com.stellarsunset.netcdf.ValidatedBinding.Validator.Error.MismatchedDimensionVariableDimensions;
+import com.stellarsunset.netcdf.ValidatedBinding.Validator.Error.MissingVariable;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
@@ -29,7 +28,7 @@ import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-class SchemaBindingValidatorTest {
+class ValidatedBindingTest {
 
     private static File FILE;
 
@@ -47,7 +46,7 @@ class SchemaBindingValidatorTest {
                 .intCoordinateVariable("fake", (b, v) -> b + v)
                 .build();
 
-        Optional<SchemaBindingValidator.Error> error = validate(binding).map(this::unwrap);
+        Optional<ValidatedBinding.Validator.Error> error = validate(binding).map(this::unwrap);
         assertEquals(Optional.of(new MissingVariable("fake")), error);
     }
 
@@ -59,8 +58,8 @@ class SchemaBindingValidatorTest {
                 .shortCoordinateVariable("xy", (b, v) -> b + v)
                 .build();
 
-        Optional<SchemaBindingValidator.Error> error = validate(binding).map(this::unwrap);
-        assertEquals(Optional.of(new IncorrectVariableType("xy", DataType.INT, ShortSetter.class)), error);
+        Optional<ValidatedBinding.Validator.Error> error = validate(binding).map(this::unwrap);
+        assertEquals(Optional.of(new IncorrectVariableType("xy", DataType.INT, FieldBinding.Short.class)), error);
     }
 
     @Test
@@ -72,7 +71,7 @@ class SchemaBindingValidatorTest {
                 .intCoordinateVariable("xy", (b, v) -> b + v)
                 .build();
 
-        Optional<SchemaBindingValidator.Error> error = validate(binding).map(this::unwrap);
+        Optional<ValidatedBinding.Validator.Error> error = validate(binding).map(this::unwrap);
         assertEquals(Optional.of(new MissingVariable("fake")), error);
     }
 
@@ -85,8 +84,8 @@ class SchemaBindingValidatorTest {
                 .intCoordinateVariable("xy", (b, v) -> b + v)
                 .build();
 
-        Optional<SchemaBindingValidator.Error> error = validate(binding).map(this::unwrap);
-        assertEquals(Optional.of(new IncorrectVariableType("x", DataType.INT, ShortSetter.class)), error);
+        Optional<ValidatedBinding.Validator.Error> error = validate(binding).map(this::unwrap);
+        assertEquals(Optional.of(new IncorrectVariableType("x", DataType.INT, FieldBinding.Short.class)), error);
     }
 
     @Test
@@ -98,7 +97,7 @@ class SchemaBindingValidatorTest {
                 .intCoordinateVariable("xy", (b, y) -> b + y)
                 .build();
 
-        Optional<SchemaBindingValidator.Error> error = validate(binding).map(this::unwrap);
+        Optional<ValidatedBinding.Validator.Error> error = validate(binding).map(this::unwrap);
 
         Multimap<String, String> errorContent = HashMultimap.create();
         errorContent.put("x,y", "xy");
@@ -116,7 +115,7 @@ class SchemaBindingValidatorTest {
                 .intCoordinateVariable("xy", (b, v) -> b + v)
                 .build();
 
-        Optional<SchemaBindingValidator.Error> error = validate(binding).map(this::unwrap);
+        Optional<ValidatedBinding.Validator.Error> error = validate(binding).map(this::unwrap);
 
         MismatchedDimensionVariableDimensions expected = new MismatchedDimensionVariableDimensions(
                 "z",
@@ -127,16 +126,16 @@ class SchemaBindingValidatorTest {
         assertEquals(Optional.of(expected), error);
     }
 
-    private SchemaBindingValidator.Error unwrap(SchemaBindingValidator.Error error) {
+    private ValidatedBinding.Validator.Error unwrap(ValidatedBinding.Validator.Error error) {
         return switch (error) {
-            case SchemaBindingValidator.Error.Combined c -> unwrap(c.errors().iterator().next());
+            case ValidatedBinding.Validator.Error.Combined c -> unwrap(c.errors().iterator().next());
             default -> error;
         };
     }
 
-    private <T> Optional<SchemaBindingValidator.Error> validate(SchemaBinding<T> binding) {
+    private <T> Optional<ValidatedBinding.Validator.Error> validate(SchemaBinding<T> binding) {
         try (NetcdfFile file = NetcdfFiles.open(FILE.getAbsolutePath())) {
-            return new SchemaBindingValidator<>(file, binding).findErrors();
+            return new ValidatedBinding.Validator<>(file, binding).validate().right();
         } catch (IOException e) {
             return Optional.empty();
         }

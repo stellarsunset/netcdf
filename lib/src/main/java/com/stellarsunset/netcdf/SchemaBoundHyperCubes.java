@@ -1,7 +1,5 @@
 package com.stellarsunset.netcdf;
 
-import com.stellarsunset.netcdf.Hypercube.RecordCreationException;
-import com.stellarsunset.netcdf.field.*;
 import ucar.nc2.NetcdfFile;
 import ucar.nc2.Variable;
 
@@ -33,74 +31,6 @@ class SchemaBoundHyperCubes {
         };
     }
 
-        /*
-        NetcdfFile file = binding.context();
-        SchemaBinding<T> schema = binding.schema();
-
-        List<Setter<T>> coordinateSetters = new ArrayList<>();
-        List<Array> coordinateArrays = new ArrayList<>();
-
-        for (var entry : schema.coordinateVariables().entrySet()) {
-
-            Variable variable = file.findVariable(entry.getKey());
-
-            coordinateSetters.add(Setter.from(entry.getValue()));
-            var array = com.stellarsunset.netcdf.Array.wrap(variable.read().reduce());
-        }
-
-        VariablesSetter<T> coordinatesSetter = VariablesSetter.from(
-                coordinateSetters.toArray(Setter[]::new),
-                coordinateArrays.toArray(Array[]::new)
-        );
-
-        // Grab only the dimensions of our variables with a length greater than 1
-        var orderedNonZeroDimensions = file.findVariable(binding.coordinateVariables().keySet().iterator().next())
-                .getDimensions()
-                .stream()
-                .filter(d -> d.getLength() != 1)
-                .toList();
-
-        int dimensionCount = orderedNonZeroDimensions.size();
-
-        VariablesSetter<T>[] dimensionsSetters = new VariablesSetter[dimensionCount];
-
-        int[] dimensionLengths = orderedNonZeroDimensions.stream()
-                .mapToInt(Dimension::getLength)
-                .toArray();
-
-        for (int i = 0; i < dimensionCount; i++) {
-
-            var dimension = orderedNonZeroDimensions.get(i);
-
-            List<Setter<T>> dimensionSetters = new ArrayList<>();
-            List<Array> dimensionArrays = new ArrayList<>();
-
-            for (var variableName : binding.variablesFor(dimension.getName())) {
-
-                Variable variable = file.findVariable(variableName);
-
-                dimensionSetters.add(Setter.from(binding.dimensionVariableBinding(variableName)));
-                dimensionArrays.add(variable.read());
-            }
-
-            VariablesSetter<T> dimensionsSetter = VariablesSetter.from(
-                    dimensionSetters.toArray(Setter[]::new),
-                    dimensionArrays.toArray(Array[]::new)
-            );
-
-            dimensionsSetters[i] = dimensionsSetter;
-        }
-
-        return from(
-                asSupplier(binding.recordInitializer()),
-                dimensionsSetters,
-                dimensionLengths,
-                coordinatesSetter,
-                asConsumer(binding.recordFinalizer())
-        );
-    */
-
-
     private static <T> Hypercube.D1<T> makeD1(ValidatedBinding.D1<T> binding) {
 
         NetcdfFile file = binding.context();
@@ -108,13 +38,13 @@ class SchemaBoundHyperCubes {
 
         IndexBinding.D1<T> coordinates = schema.coordinateVariables().entrySet().stream()
                 .map(entry -> createD1Binding(
-                        requireNonNull(file.findVariable(entry.getKey()), "Variable always present in validated binding."),
+                        requireNonNull(file.findVariable(entry.getKey()), "Missing required variable, check validation logic."),
                         entry.getValue()))
                 .reduce(IndexBinding.D1.noop(), IndexBinding.D1::combine);
 
         IndexBinding.D1<T> dimension = schema.dimensionVariables().entrySet().stream()
                 .map(entry -> createD1Binding(
-                        requireNonNull(file.findVariable(entry.getKey()), "Variable always present in validated binding."),
+                        requireNonNull(file.findVariable(entry.getKey()), "Missing required variable, check validation logic."),
                         entry.getValue()))
                 .reduce(IndexBinding.D1.noop(), IndexBinding.D1::combine);
 
@@ -128,8 +58,12 @@ class SchemaBoundHyperCubes {
     }
 
     private static <T> IndexBinding.D1<T> createD1Binding(Variable variable, FieldBinding<T> fieldBinding) {
-        Array.D1 array = Array.wrap(variable.read().reduce());
-        return array.bindIndex(fieldBinding);
+        try {
+            Array.D1 array = Array.wrap(variable.read().reduce());
+            return array.bindIndex(fieldBinding);
+        } catch (IOException e) {
+            throw
+        }
     }
 
     private static <T> Hypercube.D2<T> makeD2(ValidatedBinding.D2<T> binding) {
@@ -142,67 +76,6 @@ class SchemaBoundHyperCubes {
 
     private static <T> Hypercube.D4<T> makeD4(ValidatedBinding.D4<T> binding) {
         return null;
-    }
-
-    /**
-     * Create a new record iterator which returns a lazy sequence of records pulled from the underlying cdm data.
-     *
-     * @param initializer      supplier for new record instances to call setters against
-     * @param dimensionSetters setters on the objects for dimension values
-     * @param dimensionLengths the length of each dimension
-     * @param varsSetter       setter for injecting the variable value at the dimension coordinates into the record
-     * @param finalizer        finalizer for records before they are returned from the iterator
-     */
-    private static <T> Hypercube<T> from(Supplier<T> initializer, VariablesSetter<T>[] dimensionSetters, int[] dimensionLengths, VariablesSetter<T> varsSetter, Consumer<T> finalizer) {
-        return switch (dimensionLengths.length) {
-            case 1 -> new D1<>(
-                    initializer,
-                    dimensionSetters[0],
-                    dimensionLengths[0],
-                    varsSetter,
-                    finalizer
-            );
-            case 2 -> new D2<>(
-                    initializer,
-                    dimensionSetters[0],
-                    dimensionLengths[0],
-                    dimensionSetters[1],
-                    dimensionLengths[1],
-                    varsSetter,
-                    finalizer
-            );
-            case 3 -> new D3<>(
-                    initializer,
-                    dimensionSetters[0],
-                    dimensionLengths[0],
-                    dimensionSetters[1],
-                    dimensionLengths[1],
-                    dimensionSetters[2],
-                    dimensionLengths[2],
-                    varsSetter,
-                    finalizer
-            );
-            case 4 -> new D4<>(
-                    initializer,
-                    dimensionSetters[0],
-                    dimensionLengths[0],
-                    dimensionSetters[1],
-                    dimensionLengths[1],
-                    dimensionSetters[2],
-                    dimensionLengths[2],
-                    dimensionSetters[3],
-                    dimensionLengths[3],
-                    varsSetter,
-                    finalizer
-            );
-            default -> throw new IllegalArgumentException(
-                    String.format(
-                            "Currently only optimised readers over up to %s dimensions are supported. Request a D%sIterator.",
-                            4,
-                            dimensionLengths.length
-                    )
-            );
-        };
     }
 
     /**
@@ -269,230 +142,6 @@ class SchemaBoundHyperCubes {
 
         @Override
         public void close() {
-        }
-    }
-
-
-    /**
-     * Internal setter interface to wrap the client-facing {@link FieldSetter} types and hide them from the internals of the read operation.
-     *
-     * <p>These setters need to encapsulate the boolean/character/etc. read operations.
-     */
-    interface Setter<T> {
-
-        static <T> Setter<T> noop() {
-            return new Noop<>();
-        }
-
-        static <T> Setter<T> from(FieldSetter<T> setter) {
-            return switch (setter) {
-                case NoopSetter<T> ns -> new Noop<>();
-                case ByteSetter<T> bs -> new Byte<>(bs);
-                case CharacterSetter<T> cs -> new Character<>(cs);
-                case BooleanSetter<T> bs -> new Boolean<>(bs);
-                case ShortSetter<T> ss -> new Short<>(ss);
-                case IntSetter<T> is -> new Int<>(is);
-                case LongSetter<T> ls -> new Long<>(ls);
-                case FloatSetter<T> fs -> new Float<>(fs);
-                case DoubleSetter<T> ds -> new Double<>(ds);
-            };
-        }
-
-        T set(T record, int element, Array data);
-
-        record Noop<T>() implements Setter<T> {
-            @Override
-            public T set(T record, int element, Array data) {
-                return record;
-            }
-        }
-
-        record Byte<T>(ByteSetter<T> bs) implements Setter<T> {
-            @Override
-            public T set(T record, int element, Array data) {
-                try {
-                    return bs.accept(record, data.getByte(element));
-                } catch (IOException e) {
-                    throw new RecordCreationException("Error setting byte field at offset: " + element, e);
-                }
-            }
-        }
-
-        record Character<T>(CharacterSetter<T> cs) implements Setter<T> {
-            @Override
-            public T set(T record, int element, Array data) {
-                try {
-                    return cs.accept(record, data.getChar(element));
-                } catch (IOException e) {
-                    throw new RecordCreationException("Error setting char field at offset: " + element, e);
-                }
-            }
-        }
-
-        record Boolean<T>(BooleanSetter<T> bs) implements Setter<T> {
-            @Override
-            public T set(T record, int element, Array data) {
-                try {
-                    return bs.accept(record, data.getBoolean(element));
-                } catch (IOException e) {
-                    throw new RecordCreationException("Error setting boolean field at offset: " + element, e);
-                }
-            }
-        }
-
-        record Short<T>(ShortSetter<T> ss) implements Setter<T> {
-            @Override
-            public T set(T record, int element, Array data) {
-                try {
-                    return ss.accept(record, data.getShort(element));
-                } catch (IOException e) {
-                    throw new RecordCreationException("Error setting short field at offset: " + element, e);
-                }
-            }
-        }
-
-        record Int<T>(IntSetter<T> is) implements Setter<T> {
-            @Override
-            public T set(T record, int element, Array data) {
-                try {
-                    return is.accept(record, data.getInt(element));
-                } catch (IOException e) {
-                    throw new RecordCreationException("Error setting int field at offset: " + element, e);
-                }
-            }
-        }
-
-        record Long<T>(LongSetter<T> ls) implements Setter<T> {
-            @Override
-            public T set(T record, int element, Array data) {
-                try {
-                    return ls.accept(record, data.getLong(element));
-                } catch (IOException e) {
-                    throw new RecordCreationException("Error setting long field at offset: " + element, e);
-                }
-            }
-        }
-
-        record Float<T>(FloatSetter<T> fs) implements Setter<T> {
-            @Override
-            public T set(T record, int element, Array data) {
-                try {
-                    return fs.accept(record, data.getFloat(element));
-                } catch (IOException e) {
-                    throw new RecordCreationException("Error setting long field at offset: " + element, e);
-                }
-            }
-        }
-
-        record Double<T>(DoubleSetter<T> ds) implements Setter<T> {
-            @Override
-            public T set(T record, int element, Array data) {
-                try {
-                    return ds.accept(record, data.getDouble(element));
-                } catch (IOException e) {
-                    throw new RecordCreationException("Error setting double field at offset: " + element, e);
-                }
-            }
-        }
-    }
-
-
-    sealed interface VariablesSetter<T> {
-
-        /**
-         * Create a composite setter for a collection of variables and their arrays, for speed call the setters directly
-         * to avoid incurring the nested for-loop initialization overhead on each set call.
-         */
-        static <T> VariablesSetter<T> from(Setter<T>[] setters, Array[] variables) {
-            return switch (setters.length) {
-                case 1 -> new N1<>(setters[0], variables[0]);
-                case 2 -> new N2<>(setters[0], variables[0], setters[1], variables[1]);
-                case 3 -> new N3<>(setters[0], variables[0], setters[1], variables[1], setters[2], variables[2]);
-                case 4 ->
-                        new N4<>(setters[0], variables[0], setters[1], variables[1], setters[2], variables[2], setters[3], variables[3]);
-                case 5 ->
-                        new N5<>(setters[0], variables[0], setters[1], variables[1], setters[2], variables[2], setters[3], variables[3], setters[4], variables[4]);
-                case 6 ->
-                        new N6<>(setters[0], variables[0], setters[1], variables[1], setters[2], variables[2], setters[3], variables[3], setters[4], variables[4], setters[5], variables[5]);
-                case 7 ->
-                        new N7<>(setters[0], variables[0], setters[1], variables[1], setters[2], variables[2], setters[3], variables[3], setters[4], variables[4], setters[5], variables[5], setters[6], variables[6]);
-                default -> new NAny<>(setters, variables);
-            };
-        }
-
-        T set(T record, int element);
-
-        record N1<T>(Setter<T> i0, Array d0) implements VariablesSetter<T> {
-            @Override
-            public T set(T record, int element) {
-                return i0.set(record, element, d0);
-            }
-        }
-
-        record N2<T>(Setter<T> i0, Array d0, Setter<T> i1, Array d1) implements VariablesSetter<T> {
-            @Override
-            public T set(T record, int element) {
-                return i0.set(i1.set(record, element, d1), element, d0);
-            }
-        }
-
-        record N3<T>(Setter<T> i0, Array d0, Setter<T> i1, Array d1, Setter<T> i2,
-                     Array d2) implements VariablesSetter<T> {
-            @Override
-            public T set(T record, int element) {
-                return i0.set(i1.set(i2.set(record, element, d2), element, d1), element, d0);
-            }
-        }
-
-        record N4<T>(Setter<T> i0, Array d0, Setter<T> i1, Array d1, Setter<T> i2,
-                     Array d2, Setter<T> i3, Array d3) implements VariablesSetter<T> {
-            @Override
-            public T set(T record, int element) {
-                return i0.set(i1.set(i2.set(i3.set(record, element, d3), element, d2), element, d1), element, d0);
-            }
-        }
-
-        record N5<T>(Setter<T> i0, Array d0, Setter<T> i1, Array d1, Setter<T> i2,
-                     Array d2, Setter<T> i3, Array d3, Setter<T> i4, Array d4) implements VariablesSetter<T> {
-            @Override
-            public T set(T record, int element) {
-                return i0.set(i1.set(i2.set(i3.set(i4.set(record, element, d4), element, d3), element, d2), element, d1), element, d0);
-            }
-        }
-
-        record N6<T>(Setter<T> i0, Array d0, Setter<T> i1, Array d1, Setter<T> i2,
-                     Array d2, Setter<T> i3, Array d3, Setter<T> i4, Array d4, Setter<T> i5,
-                     Array d5) implements VariablesSetter<T> {
-            @Override
-            public T set(T record, int element) {
-                return i0.set(i1.set(i2.set(i3.set(i4.set(i5.set(record, element, d5), element, d4), element, d3), element, d2), element, d1), element, d0);
-            }
-        }
-
-        record N7<T>(Setter<T> i0, Array d0, Setter<T> i1, Array d1, Setter<T> i2,
-                     Array d2, Setter<T> i3, Array d3, Setter<T> i4, Array d4, Setter<T> i5,
-                     Array d5, Setter<T> i6, Array d6) implements VariablesSetter<T> {
-            @Override
-            public T set(T record, int element) {
-                return i0.set(i1.set(i2.set(i3.set(i4.set(i5.set(i6.set(record, element, d6), element, d5), element, d4), element, d3), element, d2), element, d1), element, d0);
-            }
-        }
-
-        /**
-         * Slower due to loop initialization overhead and nesting (within some outer caller).
-         */
-        record NAny<T>(Setter<T>[] setters, Array[] arrays) implements VariablesSetter<T> {
-
-            @Override
-            public T set(T record, int element) {
-
-                T temp = record;
-                for (int i = setters.length - 1; i >= 0; i--) {
-                    temp = setters[i].set(temp, element, arrays[i]);
-                }
-
-                return temp;
-            }
         }
     }
 }

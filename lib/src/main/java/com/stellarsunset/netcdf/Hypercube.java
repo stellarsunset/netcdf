@@ -3,6 +3,8 @@ package com.stellarsunset.netcdf;
 import ucar.nc2.NetcdfFile;
 
 import java.io.IOException;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 /**
  * Interface for N-dimensional "hyper"-cubes containing gridded NetCDF weather information.
@@ -20,10 +22,20 @@ public sealed interface Hypercube<T> extends AutoCloseable {
         return SchemaBoundHyperCubes.make(ValidatedBinding.validate(file, binding));
     }
 
+    /**
+     * Stream all records out of the associated {@link Hypercube} traversing each dimension in order.
+     */
+    Stream<T> stream();
+
     non-sealed interface D1<T> extends Hypercube<T> {
         T read(int i);
 
         int max();
+
+        @Override
+        default Stream<T> stream() {
+            return IntStream.range(0, max()).mapToObj(this::read);
+        }
     }
 
     non-sealed interface D2<T> extends Hypercube<T> {
@@ -32,6 +44,11 @@ public sealed interface Hypercube<T> extends AutoCloseable {
         int d0Max();
 
         int d1Max();
+
+        @Override
+        default Stream<T> stream() {
+            return Stream.empty();
+        }
     }
 
     non-sealed interface D3<T> extends Hypercube<T> {
@@ -42,6 +59,11 @@ public sealed interface Hypercube<T> extends AutoCloseable {
         int d1Max();
 
         int d2Max();
+
+        @Override
+        default Stream<T> stream() {
+            return Stream.empty();
+        }
     }
 
     non-sealed interface D4<T> extends Hypercube<T> {
@@ -54,6 +76,11 @@ public sealed interface Hypercube<T> extends AutoCloseable {
         int d2Max();
 
         int d3Max();
+
+        @Override
+        default Stream<T> stream() {
+            return Stream.empty();
+        }
     }
 
     /**

@@ -15,7 +15,7 @@ public interface NetcdfRecordReader<T> {
      * @param binding the schema to use when reading variables from the files in to POJO fields
      */
     static <T> NetcdfRecordReader<T> schemaBound(SchemaBinding<T> binding) {
-        return new SchemaBoundRecordReader<>(binding);
+        return file -> Hypercube.schemaBound(file, binding).stream();
     }
 
     Stream<T> read(NetcdfFile file) throws IOException;
