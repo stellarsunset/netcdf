@@ -1,10 +1,12 @@
 [versions]
+commons = "1.0.0"
 netcdf = "5.5.3"
 guava = "32.1.3-jre"
 slf4j = "2.0.13"
 junit-jupiter = "5.10.1"
 
 [libraries]
+commons = { module = "io.github.stellarsunset:commons", version.ref = "commons" }
 cdm-core = { module = "edu.ucar:cdm-core", version.ref = "netcdf" }
 
 # Runtime dependencies supporting specific file formats

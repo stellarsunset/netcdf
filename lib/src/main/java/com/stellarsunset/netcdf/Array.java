@@ -11,9 +11,10 @@ import ucar.ma2.ArrayChar;
  *     <li>Sealing - we want compile-time errors if any of the library code doesn't handle some new array primitive type</li>
  *     <li>Re-Organization - this re-organizes the Array class hierarchy to put dimensionality before type, the inverse
  *     of in the underlying ucar library, this makes some operations we want to do in-repo, simpler</li>
+ *     <li>Specific Functionality - bonus methods integrating with {@link FieldBinding}s</li>
  * </ol>
  */
-public sealed interface Array {
+sealed interface Array {
 
     /**
      * Wrap the provided UCAR array instance as sealed array type in the codebase to simplify interactions between types
@@ -41,21 +42,49 @@ public sealed interface Array {
         }
     }
 
+    static <S, T extends S> T getAsOrThrow(S s, Class<T> clz) {
+        if (clz.isInstance(s)) {
+            return (T) s;
+        }
+        var message = String.format(
+                "Unable to downcast %s to %s",
+                s.getClass(),
+                clz
+        );
+        throw new IllegalArgumentException(message);
+    }
+
     sealed interface D0 extends Array {
 
+        <T> IndexBinding.D0<T> bindIndex(FieldBinding<T> field);
+
         record Byte(ArrayByte.D0 delegate) implements D0 {
-            byte read() {
+
+            public byte read() {
                 return delegate.get();
+            }
+
+            @Override
+            public <T> IndexBinding.D0<T> bindIndex(FieldBinding<T> field) {
+                return null;
             }
         }
     }
 
     sealed interface D1 extends Array {
 
+        <T> IndexBinding.D1<T> bindIndex(FieldBinding<T> field);
+
         record Byte(ArrayByte.D1 delegate) implements D1 {
 
             public byte read(int i) {
                 return delegate.get(i);
+            }
+
+            @Override
+            public <T> IndexBinding.D1<T> bindIndex(FieldBinding<T> field) {
+                FieldBinding.Byte<T> b = getAsOrThrow(field, FieldBinding.Byte.class);
+                return (object, i) -> b.accept(object, delegate.get(i));
             }
         }
 

@@ -2,44 +2,50 @@ package com.stellarsunset.netcdf;
 
 import com.stellarsunset.netcdf.Hypercube.RecordCreationException;
 import com.stellarsunset.netcdf.field.*;
-import ucar.ma2.Array;
-import ucar.nc2.Dimension;
 import ucar.nc2.NetcdfFile;
 import ucar.nc2.Variable;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
-record SchemaBoundHyperCubeMaker<T>() {
+import static java.util.Objects.requireNonNull;
 
-    private static class MismatchedBindingTypeException {}
+/**
+ * Container class for creating {@link Hypercube} instances from {@link SchemaBinding}s.
+ */
+class SchemaBoundHyperCubes {
 
-    private static <T> Hypercube.D4<T> makeD4(NetcdfFile file, SchemaBinding<T> binding) {
-        return null;
+    /**
+     * Creates a new {@link Hypercube} using the {@link ValidatedBinding} that can be queried by index (i.e. x,y,z) for
+     * records of type {@code T}.
+     *
+     * @param binding the validated schema binding containing the field bindings and paired {@link NetcdfFile}
+     */
+    static <T> Hypercube<T> make(ValidatedBinding<T> binding) {
+        return switch (binding) {
+            case ValidatedBinding.D0<T> d0 ->
+                    throw new IllegalArgumentException("D0 hypercubes aren't supported... why would you need one?");
+            case ValidatedBinding.D1<T> d1 -> makeD1(d1);
+            case ValidatedBinding.D2<T> d2 -> makeD2(d2);
+            case ValidatedBinding.D3<T> d3 -> makeD3(d3);
+            case ValidatedBinding.D4<T> d4 -> makeD4(d4);
+        };
     }
 
-    record D4<T>() implements Hypercube.D4<T> {
-    }
-
-    static <T> Hypercube<T> make(NetcdfFile file, SchemaBinding<T> binding) throws IOException {
-
-        SchemaBindingValidator.checkValidity(file, binding);
+        /*
+        NetcdfFile file = binding.context();
+        SchemaBinding<T> schema = binding.schema();
 
         List<Setter<T>> coordinateSetters = new ArrayList<>();
         List<Array> coordinateArrays = new ArrayList<>();
 
-        for (var entry : binding.coordinateVariables().entrySet()) {
+        for (var entry : schema.coordinateVariables().entrySet()) {
 
             Variable variable = file.findVariable(entry.getKey());
 
             coordinateSetters.add(Setter.from(entry.getValue()));
             var array = com.stellarsunset.netcdf.Array.wrap(variable.read().reduce());
-            switch (array) {
-
-            }
         }
 
         VariablesSetter<T> coordinatesSetter = VariablesSetter.from(
@@ -73,7 +79,7 @@ record SchemaBoundHyperCubeMaker<T>() {
 
                 Variable variable = file.findVariable(variableName);
 
-                dimensionSetters.add(Setter.from(binding.dimensionVariableSetter(variableName)));
+                dimensionSetters.add(Setter.from(binding.dimensionVariableBinding(variableName)));
                 dimensionArrays.add(variable.read());
             }
 
@@ -92,26 +98,50 @@ record SchemaBoundHyperCubeMaker<T>() {
                 coordinatesSetter,
                 asConsumer(binding.recordFinalizer())
         );
+    */
+
+
+    private static <T> Hypercube.D1<T> makeD1(ValidatedBinding.D1<T> binding) {
+
+        NetcdfFile file = binding.context();
+        SchemaBinding<T> schema = binding.schema();
+
+        IndexBinding.D1<T> coordinates = schema.coordinateVariables().entrySet().stream()
+                .map(entry -> createD1Binding(
+                        requireNonNull(file.findVariable(entry.getKey()), "Variable always present in validated binding."),
+                        entry.getValue()))
+                .reduce(IndexBinding.D1.noop(), IndexBinding.D1::combine);
+
+        IndexBinding.D1<T> dimension = schema.dimensionVariables().entrySet().stream()
+                .map(entry -> createD1Binding(
+                        requireNonNull(file.findVariable(entry.getKey()), "Variable always present in validated binding."),
+                        entry.getValue()))
+                .reduce(IndexBinding.D1.noop(), IndexBinding.D1::combine);
+
+        return new D1<>(
+                schema.recordInitializer().demoteExceptions(),
+                dimension,
+                binding.d1Max(),
+                coordinates,
+                schema.recordFinalizer().demoteExceptions()
+        );
     }
 
-    private static <T> Supplier<T> asSupplier(RecordInitializer<T> initializer) {
-        return () -> {
-            try {
-                return initializer.get();
-            } catch (IOException e) {
-                throw new RecordCreationException("Error initializing record.", e);
-            }
-        };
+    private static <T> IndexBinding.D1<T> createD1Binding(Variable variable, FieldBinding<T> fieldBinding) {
+        Array.D1 array = Array.wrap(variable.read().reduce());
+        return array.bindIndex(fieldBinding);
     }
 
-    private static <T> Consumer<T> asConsumer(RecordFinalizer<T> finalizer) {
-        return record -> {
-            try {
-                finalizer.accept(record);
-            } catch (IOException e) {
-                throw new RecordCreationException("Error finalizing record.", e);
-            }
-        };
+    private static <T> Hypercube.D2<T> makeD2(ValidatedBinding.D2<T> binding) {
+        return null;
+    }
+
+    private static <T> Hypercube.D3<T> makeD3(ValidatedBinding.D3<T> binding) {
+        return null;
+    }
+
+    private static <T> Hypercube.D4<T> makeD4(ValidatedBinding.D4<T> binding) {
+        return null;
     }
 
     /**
@@ -181,58 +211,66 @@ record SchemaBoundHyperCubeMaker<T>() {
      *
      * <p>Prefer instantiation via {@link Hypercube#schemaBound(NetcdfFile, SchemaBinding)}.
      */
-    record D1<T>(Supplier<T> initializer, VariablesSetter<T> d0Setter, int d0Max, VariablesSetter<T> coordinatesSetter, Consumer<T> finalizer) implements Hypercube.D1<T> {
+    record D1<T>(Supplier<T> initializer, IndexBinding.D1<T> d0Setter, int max, IndexBinding.D1<T> coordinatesSetter,
+                 Consumer<T> finalizer) implements Hypercube.D1<T> {
 
         @Override
-        public T read(int d0) {
-            T t = coordinatesSetter.set(d0Setter.set(initializer.get(), d0), d0);
-            finalizer.accept(t);
-            return t;
+        public T read(int i) {
+            T r = coordinatesSetter.set(d0Setter.set(initializer.get(), i), i);
+            finalizer.accept(r);
+            return r;
         }
 
         @Override
-        public void close() throws Exception {
-        }
-    }
-
-    record D2<T>(Supplier<T> initializer, VariablesSetter<T> d0Setter, int d0Max, VariablesSetter<T> d1Setter, int d1Max, VariablesSetter<T> coordinatesSetter, Consumer<T> finalizer) implements Hypercube.D2<T> {
-
-        @Override
-        public T read(int d0, int d1) {
-            int element = (d1 * d1Max) + d0;
-            T t = coordinatesSetter.set(d0Setter.set(d1Setter.set(initializer.get(), d1), d0), element);
-            finalizer.accept(t);
-            return t;
-        }
-
-        @Override
-        public void close() throws Exception {
+        public void close() {
         }
     }
 
-    record D3<T>(Supplier<T> initializer, VariablesSetter<T> d0Setter, int d0Max, VariablesSetter<T> d1Setter, int d1Max, VariablesSetter<T> d2Setter, int d2Max, VariablesSetter<T> coordinatesSetter, Consumer<T> finalizer) implements Hypercube.D3<T> {
+    record D2<T>(Supplier<T> initializer, IndexBinding.D1<T> d0Setter, int d0Max, IndexBinding.D1<T> d1Setter,
+                 int d1Max, IndexBinding.D2<T> coordinatesSetter, Consumer<T> finalizer) implements Hypercube.D2<T> {
 
         @Override
-        public T read(int d0, int d1, int d2){
-            int element = (d2 * d2Max) + (d1 * d1Max) + d0;
-            T t = coordinatesSetter.set(d0Setter.set(d1Setter.set(d2Setter.set(initializer.get(), d2), d1), d0), element);
-            finalizer.accept(t);
-            return t;
+        public T read(int i0, int i1) {
+            T r = coordinatesSetter.set(d0Setter.set(d1Setter.set(initializer.get(), i1), i0), i0, i1);
+            finalizer.accept(r);
+            return r;
         }
 
         @Override
-        public void close() throws Exception {
-
+        public void close() {
         }
     }
 
-    record D4<T>(NetcdfFile file, SchemaBinding<T> binding) implements Hypercube.D4<T> {
+    record D3<T>(Supplier<T> initializer, IndexBinding.D1<T> d0Setter, int d0Max, IndexBinding.D1<T> d1Setter,
+                 int d1Max, IndexBinding.D1<T> d2Setter, int d2Max, IndexBinding.D3<T> coordinatesSetter,
+                 Consumer<T> finalizer) implements Hypercube.D3<T> {
+
+        @Override
+        public T read(int i0, int i1, int i2) {
+            T r = coordinatesSetter.set(d0Setter.set(d1Setter.set(d2Setter.set(initializer.get(), i2), i1), i0), i0, i1, i2);
+            finalizer.accept(r);
+            return r;
+        }
+
+        @Override
+        public void close() {
+        }
+    }
+
+    record D4<T>(Supplier<T> initializer, IndexBinding.D1<T> d0Setter, int d0Max, IndexBinding.D1<T> d1Setter,
+                 int d1Max, IndexBinding.D1<T> d2Setter, int d2Max, IndexBinding.D1<T> d3Setter, int d3Max,
+                 IndexBinding.D4<T> coordinatesSetter, Consumer<T> finalizer) implements Hypercube.D4<T> {
 
         public T read(int x, int y, int z, int t) {
-            return null;
+            T r = coordinatesSetter.set(d0Setter.set(d1Setter.set(d2Setter.set(d3Setter.set(initializer.get(), t), z), y), x), x, y, z, t);
+            finalizer.accept(r);
+            return r;
+        }
+
+        @Override
+        public void close() {
         }
     }
-
 
 
     /**

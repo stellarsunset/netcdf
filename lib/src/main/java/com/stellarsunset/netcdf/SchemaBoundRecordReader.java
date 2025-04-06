@@ -65,7 +65,7 @@ record SchemaBoundRecordReader<T>(SchemaBinding<T> binding) implements NetcdfRec
 
                 Variable variable = file.findVariable(variableName);
 
-                dimensionSetters.add(Setter.from(binding.dimensionVariableSetter(variableName)));
+                dimensionSetters.add(Setter.from(binding.dimensionVariableBinding(variableName)));
                 dimensionArrays.add(variable.read());
             }
 

@@ -22,6 +22,7 @@ repositories {
 dependencies {
 
     api(libs.cdm.core)
+    api(libs.commons)
     implementation(libs.guava)
     implementation(libs.slf4j.api)
 
@@ -31,7 +32,7 @@ dependencies {
 
 java {
     toolchain {
-        languageVersion = JavaLanguageVersion.of(21)
+        languageVersion = JavaLanguageVersion.of(23)
     }
 }
 

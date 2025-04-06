@@ -4,21 +4,30 @@ import ucar.nc2.NetcdfFile;
 
 import java.io.IOException;
 
-/** Interface for N-dimensional "hyper"-cubes containing gridded NetCDF weather information. */
+/**
+ * Interface for N-dimensional "hyper"-cubes containing gridded NetCDF weather information.
+ */
 public sealed interface Hypercube<T> extends AutoCloseable {
 
+    /**
+     * Creates a new {@link Hypercube} backed by data in the provided {@link NetcdfFile} and generating objects based on
+     * the field bindings provided by the {@link SchemaBinding}.
+     *
+     * @param file    the netcdf file to read values from
+     * @param binding the binding to use to generate objects from the underlying data
+     */
     static <T> Hypercube<T> schemaBound(NetcdfFile file, SchemaBinding<T> binding) {
-        return  SchemaBoundHyperCubeMaker.make(file, binding);
+        return SchemaBoundHyperCubes.make(ValidatedBinding.validate(file, binding));
     }
 
     non-sealed interface D1<T> extends Hypercube<T> {
-        T read(int d0);
+        T read(int i);
 
-        int d0Max();
+        int max();
     }
 
     non-sealed interface D2<T> extends Hypercube<T> {
-        T read(int d0, int d1);
+        T read(int i0, int i1);
 
         int d0Max();
 
@@ -26,7 +35,7 @@ public sealed interface Hypercube<T> extends AutoCloseable {
     }
 
     non-sealed interface D3<T> extends Hypercube<T> {
-        T read(int d0, int d1, int d2);
+        T read(int i0, int i1, int i2);
 
         int d0Max();
 

@@ -31,7 +31,7 @@ record SchemaBindingValidator<T>(NetcdfFile file, SchemaBinding<T> binding) {
     }
 
     /**
-     * Optionally return an {@link Error} describing any issues which would result in errors if the provided binding was
+     * Optionally return an {@link Error} describing any issues which would result in errors if the provided schema was
      * run against the provided {@link NetcdfFile}.
      */
     Optional<Error> findErrors() {
@@ -252,7 +252,7 @@ record SchemaBindingValidator<T>(NetcdfFile file, SchemaBinding<T> binding) {
         }
 
         /**
-         * Indicates the {@link DataType} of the requested variable is not supported for object binding.
+         * Indicates the {@link DataType} of the requested variable is not supported for object schema.
          */
         record UnhandledVariableType(String variableName, DataType dataType) implements Error {
             @Override
