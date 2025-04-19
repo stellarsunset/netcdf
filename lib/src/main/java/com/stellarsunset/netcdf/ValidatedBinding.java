@@ -51,24 +51,126 @@ sealed interface ValidatedBinding<T> extends AutoCloseable {
         context().close();
     }
 
+    /**
+     * Returns the length of the dimension at the provided index.
+     *
+     * <p>This is done as a private static method because I don't think we actually want to expose this on the interface
+     * directly, as in the D0 case it doesn't really make sense.
+     *
+     * @param binding the validated schema binding containing the dimensions/variables we care about
+     * @param index   the index of the dimension we want the length of
+     */
+    private static <T> int dimensionSize(ValidatedBinding<T> binding, int index) {
+        Variable anyVariable = binding.context()
+                .findVariable(binding.schema().coordinateVariables().entrySet().iterator().next().getKey());
+
+        requireNonNull(anyVariable, "Variable should always be present in a validated binding.");
+        return anyVariable.getDimension(index).getLength();
+    }
+
+    /**
+     * Returns the subset of dimension variables in the validated binding that are tied to the index.
+     *
+     * <p>This is done as a private static method because I don't think we actually want to expose this on the interface
+     * directly, as in the D0 case it doesn't really make sense.
+     *
+     * @param binding the validated schema binding containing the dimensions/variables we care about
+     * @param index   the index of the dimension we want the variables for
+     */
+    private static <T> Map<String, FieldBinding<T>> dimensionVariables(ValidatedBinding<T> binding, int index) {
+        return Map.of();
+    }
+
     record D0<T>(NetcdfFile context, SchemaBinding<T> schema) implements ValidatedBinding<T> {
     }
 
     record D1<T>(NetcdfFile context, SchemaBinding<T> schema) implements ValidatedBinding<T> {
-        public int d1Max() {
-            return schema.dimensionVariables().keySet().stream()
-                    .map(name -> )
-                    .findFirst();
+        public int max() {
+            return ValidatedBinding.dimensionSize(this, 0);
+        }
+
+        public Map<String, FieldBinding<T>> dimensionVariables() {
+            return ValidatedBinding.dimensionVariables(this, 0);
         }
     }
 
     record D2<T>(NetcdfFile context, SchemaBinding<T> schema) implements ValidatedBinding<T> {
+
+        public int d0Max() {
+            return ValidatedBinding.dimensionSize(this, 0);
+        }
+
+        public Map<String, FieldBinding<T>> d0DimensionVariables() {
+            return ValidatedBinding.dimensionVariables(this, 0);
+        }
+
+        public int d1Max() {
+            return ValidatedBinding.dimensionSize(this, 1);
+        }
+
+        public Map<String, FieldBinding<T>> d1DimensionVariables() {
+            return ValidatedBinding.dimensionVariables(this, 1);
+        }
     }
 
     record D3<T>(NetcdfFile context, SchemaBinding<T> schema) implements ValidatedBinding<T> {
+        public int d0Max() {
+            return ValidatedBinding.dimensionSize(this, 0);
+        }
+
+        public Map<String, FieldBinding<T>> d0DimensionVariables() {
+            return ValidatedBinding.dimensionVariables(this, 0);
+        }
+
+        public int d1Max() {
+            return ValidatedBinding.dimensionSize(this, 1);
+        }
+
+        public Map<String, FieldBinding<T>> d1DimensionVariables() {
+            return ValidatedBinding.dimensionVariables(this, 1);
+        }
+
+        public int d2Max() {
+            return ValidatedBinding.dimensionSize(this, 2);
+        }
+
+        public Map<String, FieldBinding<T>> d2DimensionVariables() {
+            return ValidatedBinding.dimensionVariables(this, 2);
+        }
     }
 
     record D4<T>(NetcdfFile context, SchemaBinding<T> schema) implements ValidatedBinding<T> {
+        public int d0Max() {
+            return ValidatedBinding.dimensionSize(this, 0);
+        }
+
+        public Map<String, FieldBinding<T>> d0DimensionVariables() {
+            return ValidatedBinding.dimensionVariables(this, 0);
+        }
+
+        public int d1Max() {
+            return ValidatedBinding.dimensionSize(this, 1);
+        }
+
+        public Map<String, FieldBinding<T>> d1DimensionVariables() {
+            return ValidatedBinding.dimensionVariables(this, 1);
+        }
+
+        public int d2Max() {
+            return ValidatedBinding.dimensionSize(this, 2);
+        }
+
+        public Map<String, FieldBinding<T>> d2DimensionVariables() {
+            return ValidatedBinding.dimensionVariables(this, 2);
+        }
+
+        public int d3Max() {
+            return ValidatedBinding.dimensionSize(this, 3);
+        }
+
+        public Map<String, FieldBinding<T>> d3DimensionVariables() {
+            return ValidatedBinding.dimensionVariables(this, 3);
+        }
     }
 
     record Validator<T>(NetcdfFile file, SchemaBinding<T> schema) {

@@ -27,6 +27,16 @@ sealed interface Array {
             case ArrayByte.D2 d2 -> new D2.Byte(d2);
             case ArrayByte.D3 d3 -> new D3.Byte(d3);
             case ArrayByte.D4 d4 -> new D4.Byte(d4);
+            case ArrayBoolean.D0 d0 -> new D0.Bool(d0);
+            case ArrayBoolean.D1 d1 -> new D1.Bool(d1);
+            case ArrayBoolean.D2 d2 -> new D2.Bool(d2);
+            case ArrayBoolean.D3 d3 -> new D3.Bool(d3);
+            case ArrayBoolean.D4 d4 -> new D4.Bool(d4);
+            case ArrayChar.D0 d0 -> new D0.Char(d0);
+            case ArrayChar.D1 d1 -> new D1.Char(d1);
+            case ArrayChar.D2 d2 -> new D2.Char(d2);
+            case ArrayChar.D3 d3 -> new D3.Char(d3);
+            case ArrayChar.D4 d4 -> new D4.Char(d4);
             default -> throw new UnsupportedArrayTypeException(delegate);
         };
     }
@@ -66,7 +76,34 @@ sealed interface Array {
 
             @Override
             public <T> IndexBinding.D0<T> bindIndex(FieldBinding<T> field) {
-                return null;
+                FieldBinding.Byte<T> b = getAsOrThrow(field, FieldBinding.Byte.class);
+                return object -> b.accept(object, delegate.get());
+            }
+        }
+
+        record Bool(ArrayBoolean.D0 delegate) implements D0 {
+
+            public boolean read() {
+                return delegate.get();
+            }
+
+            @Override
+            public <T> IndexBinding.D0<T> bindIndex(FieldBinding<T> field) {
+                FieldBinding.Bool<T> b = getAsOrThrow(field, FieldBinding.Bool.class);
+                return object -> b.accept(object, delegate.get());
+            }
+        }
+
+        record Char(ArrayChar.D0 delegate) implements D0 {
+
+            public char read() {
+                return delegate.get();
+            }
+
+            @Override
+            public <T> IndexBinding.D0<T> bindIndex(FieldBinding<T> field) {
+                FieldBinding.Char<T> c = getAsOrThrow(field, FieldBinding.Char.class);
+                return object -> c.accept(object, delegate.get());
             }
         }
     }
@@ -89,41 +126,160 @@ sealed interface Array {
         }
 
         record Bool(ArrayBoolean.D1 delegate) implements D1 {
-            boolean read(int i) {
+
+            public boolean read(int i) {
                 return delegate.get(i);
+            }
+
+            @Override
+            public <T> IndexBinding.D1<T> bindIndex(FieldBinding<T> field) {
+                FieldBinding.Bool<T> b = getAsOrThrow(field, FieldBinding.Bool.class);
+                return (object, i) -> b.accept(object, delegate.get(i));
             }
         }
 
         record Char(ArrayChar.D1 delegate) implements D1 {
-            char read(int i) {
+
+            public char read(int i) {
                 return delegate.get(i);
+            }
+
+            @Override
+            public <T> IndexBinding.D1<T> bindIndex(FieldBinding<T> field) {
+                FieldBinding.Char<T> c = getAsOrThrow(field, FieldBinding.Char.class);
+                return (object, i) -> c.accept(object, delegate.get(i));
             }
         }
     }
 
     sealed interface D2 extends Array {
 
+        <T> IndexBinding.D2<T> bindIndex(FieldBinding<T> field);
+
         record Byte(ArrayByte.D2 delegate) implements D2 {
-            byte read(int i0, int i1) {
-                return delegate.get(i0, i1);
+
+            public byte read(int i, int j) {
+                return delegate.get(i, j);
+            }
+
+            @Override
+            public <T> IndexBinding.D2<T> bindIndex(FieldBinding<T> field) {
+                FieldBinding.Byte<T> b = getAsOrThrow(field, FieldBinding.Byte.class);
+                return (object, i, j) -> b.accept(object, delegate.get(i, j));
+            }
+        }
+
+        record Bool(ArrayBoolean.D2 delegate) implements D2 {
+
+            public boolean read(int i, int j) {
+                return delegate.get(i, j);
+            }
+
+            @Override
+            public <T> IndexBinding.D2<T> bindIndex(FieldBinding<T> field) {
+                FieldBinding.Bool<T> b = getAsOrThrow(field, FieldBinding.Bool.class);
+                return (object, i, j) -> b.accept(object, delegate.get(i, j));
+            }
+        }
+
+        record Char(ArrayChar.D2 delegate) implements D2 {
+
+            public char read(int i, int j) {
+                return delegate.get(i, j);
+            }
+
+            @Override
+            public <T> IndexBinding.D2<T> bindIndex(FieldBinding<T> field) {
+                FieldBinding.Char<T> c = getAsOrThrow(field, FieldBinding.Char.class);
+                return (object, i, j) -> c.accept(object, delegate.get(i, j));
             }
         }
     }
 
     sealed interface D3 extends Array {
 
+        <T> IndexBinding.D3<T> bindIndex(FieldBinding<T> field);
+
         record Byte(ArrayByte.D3 delegate) implements D3 {
-            byte read(int i0, int i1, int i2) {
-                return delegate.get(i0, i1, i2);
+
+            public byte read(int i, int j, int k) {
+                return delegate.get(i, j, k);
+            }
+
+            @Override
+            public <T> IndexBinding.D3<T> bindIndex(FieldBinding<T> field) {
+                FieldBinding.Byte<T> b = getAsOrThrow(field, FieldBinding.Byte.class);
+                return (object, i, j, k) -> b.accept(object, delegate.get(i, j, k));
+            }
+        }
+
+        record Bool(ArrayBoolean.D3 delegate) implements D3 {
+
+            public boolean read(int i, int j, int k) {
+                return delegate.get(i, j, k);
+            }
+
+            @Override
+            public <T> IndexBinding.D3<T> bindIndex(FieldBinding<T> field) {
+                FieldBinding.Bool<T> b = getAsOrThrow(field, FieldBinding.Bool.class);
+                return (object, i, j, k) -> b.accept(object, delegate.get(i, j, k));
+            }
+        }
+
+        record Char(ArrayChar.D3 delegate) implements D3 {
+
+            public char read(int i, int j, int k) {
+                return delegate.get(i, j, k);
+            }
+
+            @Override
+            public <T> IndexBinding.D3<T> bindIndex(FieldBinding<T> field) {
+                FieldBinding.Char<T> c = getAsOrThrow(field, FieldBinding.Char.class);
+                return (object, i, j, k) -> c.accept(object, delegate.get(i, j, k));
             }
         }
     }
 
     sealed interface D4 extends Array {
 
+        <T> IndexBinding.D4<T> bindIndex(FieldBinding<T> field);
+
         record Byte(ArrayByte.D4 delegate) implements D4 {
-            public byte read(int i0, int i1, int i2, int i3) {
-                return delegate.get(i0, i1, i2, i3);
+
+            public byte read(int i, int j, int k, int u) {
+                return delegate.get(i, j, k, u);
+            }
+
+            @Override
+            public <T> IndexBinding.D4<T> bindIndex(FieldBinding<T> field) {
+                FieldBinding.Byte<T> b = getAsOrThrow(field, FieldBinding.Byte.class);
+                return (object, i, j, k, u) -> b.accept(object, delegate.get(i, j, k, u));
+            }
+        }
+
+        record Bool(ArrayBoolean.D4 delegate) implements D4 {
+
+            public boolean read(int i, int j, int k, int u) {
+                return delegate.get(i, j, k, u);
+            }
+
+            @Override
+            public <T> IndexBinding.D4<T> bindIndex(FieldBinding<T> field) {
+                FieldBinding.Bool<T> b = getAsOrThrow(field, FieldBinding.Bool.class);
+                return (object, i, j, k, u) -> b.accept(object, delegate.get(i, j, k, u));
+            }
+        }
+
+        record Char(ArrayChar.D4 delegate) implements D4 {
+
+            public char read(int i, int j, int k, int u) {
+                return delegate.get(i, j, k, u);
+            }
+
+            @Override
+            public <T> IndexBinding.D4<T> bindIndex(FieldBinding<T> field) {
+                FieldBinding.Char<T> c = getAsOrThrow(field, FieldBinding.Char.class);
+                return (object, i, j, k, u) -> c.accept(object, delegate.get(i, j, k, u));
             }
         }
     }
