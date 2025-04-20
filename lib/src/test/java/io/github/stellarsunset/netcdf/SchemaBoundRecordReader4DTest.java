@@ -1,4 +1,4 @@
-package com.stellarsunset.netcdf;
+package io.github.stellarsunset.netcdf;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;

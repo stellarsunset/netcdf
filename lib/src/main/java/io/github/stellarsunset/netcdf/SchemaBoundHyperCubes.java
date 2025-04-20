@@ -1,4 +1,4 @@
-package com.stellarsunset.netcdf;
+package io.github.stellarsunset.netcdf;
 
 import ucar.nc2.NetcdfFile;
 import ucar.nc2.Variable;

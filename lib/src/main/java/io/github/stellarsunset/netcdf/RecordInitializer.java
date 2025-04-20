@@ -1,4 +1,4 @@
-package com.stellarsunset.netcdf;
+package io.github.stellarsunset.netcdf;
 
 import java.io.IOException;
 import java.util.function.Supplier;

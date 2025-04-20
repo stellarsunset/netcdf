@@ -1,4 +1,4 @@
-package com.stellarsunset.netcdf;
+package io.github.stellarsunset.netcdf;
 
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;

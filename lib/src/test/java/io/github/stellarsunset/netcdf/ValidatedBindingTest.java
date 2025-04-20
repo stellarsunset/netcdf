@@ -1,11 +1,11 @@
-package com.stellarsunset.netcdf;
+package io.github.stellarsunset.netcdf;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
-import com.stellarsunset.netcdf.ValidatedBinding.Validator.Error.IncorrectVariableType;
-import com.stellarsunset.netcdf.ValidatedBinding.Validator.Error.MismatchedCoordinateVariableDimensions;
-import com.stellarsunset.netcdf.ValidatedBinding.Validator.Error.MismatchedDimensionVariableDimensions;
-import com.stellarsunset.netcdf.ValidatedBinding.Validator.Error.MissingVariable;
+import io.github.stellarsunset.netcdf.ValidatedBinding.Validator.Error.IncorrectVariableType;
+import io.github.stellarsunset.netcdf.ValidatedBinding.Validator.Error.MismatchedCoordinateVariableDimensions;
+import io.github.stellarsunset.netcdf.ValidatedBinding.Validator.Error.MismatchedDimensionVariableDimensions;
+import io.github.stellarsunset.netcdf.ValidatedBinding.Validator.Error.MissingVariable;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
