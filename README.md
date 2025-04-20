@@ -47,11 +47,11 @@ var binding = SchemaBinding.<Measurement.Builder>builder()
 NetcdfFile file = NetcdfFiles.open("/path/to/some/file.nc");
 
 // Creates a Hypercube whose subtypes support index-based access
-Hypercube<Measurement> cube = Hypercube.schemaBound(file, binding);
+Hypercube<Measurement.Builder> cube = Hypercube.schemaBound(file, binding);
 
 // It's a 3D cube as there are only x, y, z dimensions
-Hypercube.D3<Measurement> d3Cube = (Hypercube.D3<Measurement>) cube;
-Measurement aMeasurement = d3Cube.get(0, 0, 0);
+Hypercube.D3<Measurement.Builder> d3Cube = (Hypercube.D3<Measurement.Builder>) cube;
+Measurement aMeasurement = d3Cube.get(0, 0, 0).build();
 
 // Or stream all the measurements out of the cube
 Stream<Measurement> measurements = cube.stream().map(Measurement.Builder::build);
