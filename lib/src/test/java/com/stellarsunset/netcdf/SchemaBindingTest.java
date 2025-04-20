@@ -1,6 +1,5 @@
 package com.stellarsunset.netcdf;
 
-import com.stellarsunset.netcdf.field.*;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -19,7 +18,7 @@ class SchemaBindingTest {
 
         assertAll(
                 () -> assertEquals(List.of("var"), binding.dimensionToVariables().get("x"), "x->[var]"),
-                () -> assertInstanceOf(ByteSetter.class, binding.dimensionVariableSetter("var"), "Should be a ByteSetter")
+                () -> assertInstanceOf(FieldBinding.Byte.class, binding.dimensionVariableBinding("var"), "Should be a Byte binding")
         );
     }
 
@@ -33,7 +32,7 @@ class SchemaBindingTest {
 
         assertAll(
                 () -> assertEquals(List.of("var"), binding.dimensionToVariables().get("x"), "x->[var]"),
-                () -> assertInstanceOf(CharacterSetter.class, binding.dimensionVariableSetter("var"), "Should be a CharacterSetter")
+                () -> assertInstanceOf(FieldBinding.Char.class, binding.dimensionVariableBinding("var"), "Should be a Char binding")
         );
     }
 
@@ -47,7 +46,7 @@ class SchemaBindingTest {
 
         assertAll(
                 () -> assertEquals(List.of("var"), binding.dimensionToVariables().get("x"), "x->[var]"),
-                () -> assertInstanceOf(BooleanSetter.class, binding.dimensionVariableSetter("var"), "Should be a BooleanSetter")
+                () -> assertInstanceOf(FieldBinding.Bool.class, binding.dimensionVariableBinding("var"), "Should be a Bool binding")
         );
     }
 
@@ -61,7 +60,7 @@ class SchemaBindingTest {
 
         assertAll(
                 () -> assertEquals(List.of("var"), binding.dimensionToVariables().get("x"), "x->[var]"),
-                () -> assertInstanceOf(ShortSetter.class, binding.dimensionVariableSetter("var"), "Should be a ShortSetter")
+                () -> assertInstanceOf(FieldBinding.Short.class, binding.dimensionVariableBinding("var"), "Should be a Short binding")
         );
     }
 
@@ -75,7 +74,7 @@ class SchemaBindingTest {
 
         assertAll(
                 () -> assertEquals(List.of("var"), binding.dimensionToVariables().get("x"), "x->[var]"),
-                () -> assertInstanceOf(IntSetter.class, binding.dimensionVariableSetter("var"), "Should be a IntSetter")
+                () -> assertInstanceOf(FieldBinding.Int.class, binding.dimensionVariableBinding("var"), "Should be a Int binding")
         );
     }
 
@@ -89,7 +88,7 @@ class SchemaBindingTest {
 
         assertAll(
                 () -> assertEquals(List.of("var"), binding.dimensionToVariables().get("x"), "x->[var]"),
-                () -> assertInstanceOf(LongSetter.class, binding.dimensionVariableSetter("var"), "Should be a LongSetter")
+                () -> assertInstanceOf(FieldBinding.Long.class, binding.dimensionVariableBinding("var"), "Should be a Long binding")
         );
     }
 
@@ -103,7 +102,7 @@ class SchemaBindingTest {
 
         assertAll(
                 () -> assertEquals(List.of("var"), binding.dimensionToVariables().get("x"), "x->[var]"),
-                () -> assertInstanceOf(FloatSetter.class, binding.dimensionVariableSetter("var"), "Should be a FloatSetter")
+                () -> assertInstanceOf(FieldBinding.Float.class, binding.dimensionVariableBinding("var"), "Should be a Float binding")
         );
     }
 
@@ -117,7 +116,7 @@ class SchemaBindingTest {
 
         assertAll(
                 () -> assertEquals(List.of("var"), binding.dimensionToVariables().get("x"), "x->[var]"),
-                () -> assertInstanceOf(DoubleSetter.class, binding.dimensionVariableSetter("var"), "Should be a DoubleSetter")
+                () -> assertInstanceOf(FieldBinding.Double.class, binding.dimensionVariableBinding("var"), "Should be a Double binding")
         );
     }
 
@@ -129,7 +128,7 @@ class SchemaBindingTest {
                 .byteCoordinateVariable("var", (s, v) -> s + v)
                 .build();
 
-        assertInstanceOf(ByteSetter.class, binding.coordinateVariableSetter("var"), "Should be a ByteSetter");
+        assertInstanceOf(FieldBinding.Byte.class, binding.coordinateVariableBinding("var"), "Should be a Byte binding");
     }
 
     @Test
@@ -140,7 +139,7 @@ class SchemaBindingTest {
                 .charCoordinateVariable("var", (s, v) -> s + v)
                 .build();
 
-        assertInstanceOf(CharacterSetter.class, binding.coordinateVariableSetter("var"), "Should be a CharacterSetter");
+        assertInstanceOf(FieldBinding.Char.class, binding.coordinateVariableBinding("var"), "Should be a Char binding");
     }
 
     @Test
@@ -151,7 +150,7 @@ class SchemaBindingTest {
                 .booleanCoordinateVariable("var", (s, v) -> s + v)
                 .build();
 
-        assertInstanceOf(BooleanSetter.class, binding.coordinateVariableSetter("var"), "Should be a BooleanSetter");
+        assertInstanceOf(FieldBinding.Bool.class, binding.coordinateVariableBinding("var"), "Should be a Bool binding");
     }
 
     @Test
@@ -162,7 +161,7 @@ class SchemaBindingTest {
                 .shortCoordinateVariable("var", (s, v) -> s + v)
                 .build();
 
-        assertInstanceOf(ShortSetter.class, binding.coordinateVariableSetter("var"), "Should be a ShortSetter");
+        assertInstanceOf(FieldBinding.Short.class, binding.coordinateVariableBinding("var"), "Should be a Short binding");
     }
 
     @Test
@@ -173,7 +172,7 @@ class SchemaBindingTest {
                 .intCoordinateVariable("var", (s, v) -> s + v)
                 .build();
 
-        assertInstanceOf(IntSetter.class, binding.coordinateVariableSetter("var"), "Should be a IntSetter");
+        assertInstanceOf(FieldBinding.Int.class, binding.coordinateVariableBinding("var"), "Should be a Int binding");
     }
 
     @Test
@@ -184,7 +183,7 @@ class SchemaBindingTest {
                 .longCoordinateVariable("var", (s, v) -> s + v)
                 .build();
 
-        assertInstanceOf(LongSetter.class, binding.coordinateVariableSetter("var"), "Should be a LongSetter");
+        assertInstanceOf(FieldBinding.Long.class, binding.coordinateVariableBinding("var"), "Should be a Long binding");
     }
 
     @Test
@@ -195,7 +194,7 @@ class SchemaBindingTest {
                 .floatCoordinateVariable("var", (s, v) -> s + v)
                 .build();
 
-        assertInstanceOf(FloatSetter.class, binding.coordinateVariableSetter("var"), "Should be a FloatSetter");
+        assertInstanceOf(FieldBinding.Float.class, binding.coordinateVariableBinding("var"), "Should be a Float binding");
     }
 
     @Test
@@ -206,6 +205,6 @@ class SchemaBindingTest {
                 .doubleCoordinateVariable("var", (s, v) -> s + v)
                 .build();
 
-        assertInstanceOf(DoubleSetter.class, binding.coordinateVariableSetter("var"), "Should be a DoubleSetter");
+        assertInstanceOf(FieldBinding.Double.class, binding.coordinateVariableBinding("var"), "Should be a Double binding");
     }
 }

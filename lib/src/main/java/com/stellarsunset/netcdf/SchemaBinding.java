@@ -3,7 +3,6 @@ package com.stellarsunset.netcdf;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Multimap;
-import com.stellarsunset.netcdf.field.*;
 
 import java.io.OutputStream;
 import java.io.Writer;
@@ -43,7 +42,7 @@ import static java.util.Optional.ofNullable;
  * and z coordinate has a "level" denoting some height above ground. Then there are measurements or fields available at
  * each coordinate in the grid e.g. temperature and pressure.
  *
- * <p>This class supports clients binding those dimension and coordinate variables into POJOs like:
+ * <p>This class supports clients schema those dimension and coordinate variables into POJOs like:
  * <pre>{@code
  * record AtmosphereMeasurement(
  *   double latitude, // dimension variable
@@ -54,13 +53,13 @@ import static java.util.Optional.ofNullable;
  * ) {}
  * }</pre>
  *
- * <p>In a complete binding:
+ * <p>In a complete schema:
  * <ol>
  *     <li>All coordinate variables share the same common dimensions</li>
  *     <li>Dimension variables match at least one of the shared coordinate variable dimensions</li>
  * </ol>
  *
- * <p>Note this binding instance may also be used directly with an {@link OutputStream} template type to directly sink
+ * <p>Note this schema instance may also be used directly with an {@link OutputStream} template type to directly sink
  * records to some outbound data stream.
  */
 public final class SchemaBinding<T> {
@@ -69,9 +68,9 @@ public final class SchemaBinding<T> {
 
     private final Multimap<String, String> dimensionToVariables;
 
-    private final Map<String, FieldSetter<T>> dimensionVariables;
+    private final Map<String, FieldBinding<T>> dimensionVariables;
 
-    private final Map<String, FieldSetter<T>> coordinateVariables;
+    private final Map<String, FieldBinding<T>> coordinateVariables;
 
     private final RecordFinalizer<T> recordFinalizer;
 
@@ -99,20 +98,20 @@ public final class SchemaBinding<T> {
         return dimensionToVariables.get(dimensionName);
     }
 
-    public Map<String, FieldSetter<T>> dimensionVariables() {
+    public Map<String, FieldBinding<T>> dimensionVariables() {
         return dimensionVariables;
     }
 
-    public FieldSetter<T> dimensionVariableSetter(String variableName) {
-        return ofNullable(dimensionVariables.get(variableName)).orElseGet(NoopSetter::new);
+    public FieldBinding<T> dimensionVariableBinding(String variableName) {
+        return ofNullable(dimensionVariables.get(variableName)).orElseGet(FieldBinding.Noop::new);
     }
 
-    public Map<String, FieldSetter<T>> coordinateVariables() {
+    public Map<String, FieldBinding<T>> coordinateVariables() {
         return coordinateVariables;
     }
 
-    public FieldSetter<T> coordinateVariableSetter(String variableName) {
-        return ofNullable(coordinateVariables.get(variableName)).orElseGet(NoopSetter::new);
+    public FieldBinding<T> coordinateVariableBinding(String variableName) {
+        return ofNullable(coordinateVariables.get(variableName)).orElseGet(FieldBinding.Noop::new);
     }
 
     public RecordFinalizer<T> recordFinalizer() {
@@ -125,9 +124,9 @@ public final class SchemaBinding<T> {
 
         private final Multimap<String, String> dimensionToVariables = HashMultimap.create();
 
-        private final Map<String, FieldSetter<T>> dimensionVariables = new HashMap<>();
+        private final Map<String, FieldBinding<T>> dimensionVariables = new HashMap<>();
 
-        private final Map<String, FieldSetter<T>> coordinateVariables = new HashMap<>();
+        private final Map<String, FieldBinding<T>> coordinateVariables = new HashMap<>();
 
         private RecordFinalizer<T> recordFinalizer = record -> {
         };
@@ -137,7 +136,7 @@ public final class SchemaBinding<T> {
 
         /**
          * Initialization method for getting a new instance of a record of type {@link T} that the dimension/coordinate
-         * variable binding operations can then be called against.
+         * variable schema operations can then be called against.
          *
          * <p>Usually this is some form of {@code new T.Builder();}, but for bindings that directly pipe fields into an
          * {@link OutputStream} this may simply return the same shared output stream instance.
@@ -150,7 +149,7 @@ public final class SchemaBinding<T> {
         }
 
         /**
-         * Configure an object binding for the provided dimension variable varying across the given dimension, e.g. the
+         * Configure an object schema for the provided dimension variable varying across the given dimension, e.g. the
          * latitude variable varying along the 'x' dimension.
          *
          * <p>See the top-level Javadocs for a full description.
@@ -159,122 +158,122 @@ public final class SchemaBinding<T> {
          *
          * @param dimensionName the name of the single dimension the variable varies across
          * @param variableName  the name of the variable whose values we want to bind into the record
-         * @param setter        the setter to use when binding the variable values to the object
+         * @param setter        the setter to use when schema the variable values to the object
          */
-        public Builder<T> dimensionVariable(String dimensionName, String variableName, FieldSetter<T> setter) {
+        public Builder<T> dimensionVariable(String dimensionName, String variableName, FieldBinding<T> setter) {
             this.dimensionToVariables.put(dimensionName, variableName);
             this.dimensionVariables.put(variableName, setter);
             return this;
         }
 
-        public Builder<T> byteDimensionVariable(String dimensionName, String variableName, ByteSetter<T> setter) {
+        public Builder<T> byteDimensionVariable(String dimensionName, String variableName, FieldBinding.Byte<T> setter) {
             return dimensionVariable(dimensionName, variableName, setter);
         }
 
-        public Builder<T> charDimensionVariable(String dimensionName, String variableName, CharacterSetter<T> setter) {
+        public Builder<T> charDimensionVariable(String dimensionName, String variableName, FieldBinding.Char<T> setter) {
             return dimensionVariable(dimensionName, variableName, setter);
         }
 
-        public Builder<T> booleanDimensionVariable(String dimensionName, String variableName, BooleanSetter<T> setter) {
+        public Builder<T> booleanDimensionVariable(String dimensionName, String variableName, FieldBinding.Bool<T> setter) {
             return dimensionVariable(dimensionName, variableName, setter);
         }
 
-        public Builder<T> shortDimensionVariable(String dimensionName, String variableName, ShortSetter<T> setter) {
+        public Builder<T> shortDimensionVariable(String dimensionName, String variableName, FieldBinding.Short<T> setter) {
             return dimensionVariable(dimensionName, variableName, setter);
         }
 
-        public Builder<T> intDimensionVariable(String dimensionName, String variableName, IntSetter<T> setter) {
+        public Builder<T> intDimensionVariable(String dimensionName, String variableName, FieldBinding.Int<T> setter) {
             return dimensionVariable(dimensionName, variableName, setter);
         }
 
-        public Builder<T> longDimensionVariable(String dimensionName, String variableName, LongSetter<T> setter) {
+        public Builder<T> longDimensionVariable(String dimensionName, String variableName, FieldBinding.Long<T> setter) {
             return dimensionVariable(dimensionName, variableName, setter);
         }
 
-        public Builder<T> floatDimensionVariable(String dimensionName, String variableName, FloatSetter<T> setter) {
+        public Builder<T> floatDimensionVariable(String dimensionName, String variableName, FieldBinding.Float<T> setter) {
             return dimensionVariable(dimensionName, variableName, setter);
         }
 
-        public Builder<T> doubleDimensionVariable(String dimensionName, String variableName, DoubleSetter<T> setter) {
+        public Builder<T> doubleDimensionVariable(String dimensionName, String variableName, FieldBinding.Double<T> setter) {
             return dimensionVariable(dimensionName, variableName, setter);
         }
 
-        public Builder<T> byteDimensionVariable(String dimensionName, ByteSetter<T> setter) {
+        public Builder<T> byteDimensionVariable(String dimensionName, FieldBinding.Byte<T> setter) {
             return byteDimensionVariable(dimensionName, dimensionName, setter);
         }
 
-        public Builder<T> charDimensionVariable(String dimensionName, CharacterSetter<T> setter) {
+        public Builder<T> charDimensionVariable(String dimensionName, FieldBinding.Char<T> setter) {
             return charDimensionVariable(dimensionName, dimensionName, setter);
         }
 
-        public Builder<T> booleanDimensionVariable(String dimensionName, BooleanSetter<T> setter) {
+        public Builder<T> booleanDimensionVariable(String dimensionName, FieldBinding.Bool<T> setter) {
             return booleanDimensionVariable(dimensionName, dimensionName, setter);
         }
 
-        public Builder<T> shortDimensionVariable(String dimensionName, ShortSetter<T> setter) {
+        public Builder<T> shortDimensionVariable(String dimensionName, FieldBinding.Short<T> setter) {
             return shortDimensionVariable(dimensionName, dimensionName, setter);
         }
 
-        public Builder<T> intDimensionVariable(String dimensionName, IntSetter<T> setter) {
+        public Builder<T> intDimensionVariable(String dimensionName, FieldBinding.Int<T> setter) {
             return intDimensionVariable(dimensionName, dimensionName, setter);
         }
 
-        public Builder<T> longDimensionVariable(String dimensionName, LongSetter<T> setter) {
+        public Builder<T> longDimensionVariable(String dimensionName, FieldBinding.Long<T> setter) {
             return longDimensionVariable(dimensionName, dimensionName, setter);
         }
 
-        public Builder<T> floatDimensionVariable(String dimensionName, FloatSetter<T> setter) {
+        public Builder<T> floatDimensionVariable(String dimensionName, FieldBinding.Float<T> setter) {
             return floatDimensionVariable(dimensionName, dimensionName, setter);
         }
 
-        public Builder<T> doubleDimensionVariable(String dimensionName, DoubleSetter<T> setter) {
+        public Builder<T> doubleDimensionVariable(String dimensionName, FieldBinding.Double<T> setter) {
             return doubleDimensionVariable(dimensionName, dimensionName, setter);
         }
 
         /**
-         * Configure an object binding for the provided coordinate variable varying.
+         * Configure an object schema for the provided coordinate variable varying.
          *
          * <p>See the top-level Javadocs for a full description.
          *
          * <p>This is a less type-safe version of the well-named setters that may be more suitable in some situations.
          *
          * @param name   the name of the variable whose values we want to bind into the record
-         * @param setter the setter to use when binding the variable values to the object
+         * @param setter the setter to use when schema the variable values to the object
          */
-        public Builder<T> coordinateVariable(String name, FieldSetter<T> setter) {
+        public Builder<T> coordinateVariable(String name, FieldBinding<T> setter) {
             this.coordinateVariables.put(name, setter);
             return this;
         }
 
-        public Builder<T> byteCoordinateVariable(String name, ByteSetter<T> setter) {
+        public Builder<T> byteCoordinateVariable(String name, FieldBinding.Byte<T> setter) {
             return coordinateVariable(name, setter);
         }
 
-        public Builder<T> charCoordinateVariable(String name, CharacterSetter<T> setter) {
+        public Builder<T> charCoordinateVariable(String name, FieldBinding.Char<T> setter) {
             return coordinateVariable(name, setter);
         }
 
-        public Builder<T> booleanCoordinateVariable(String name, BooleanSetter<T> setter) {
+        public Builder<T> booleanCoordinateVariable(String name, FieldBinding.Bool<T> setter) {
             return coordinateVariable(name, setter);
         }
 
-        public Builder<T> shortCoordinateVariable(String name, ShortSetter<T> setter) {
+        public Builder<T> shortCoordinateVariable(String name, FieldBinding.Short<T> setter) {
             return coordinateVariable(name, setter);
         }
 
-        public Builder<T> intCoordinateVariable(String name, IntSetter<T> setter) {
+        public Builder<T> intCoordinateVariable(String name, FieldBinding.Int<T> setter) {
             return coordinateVariable(name, setter);
         }
 
-        public Builder<T> longCoordinateVariable(String name, LongSetter<T> setter) {
+        public Builder<T> longCoordinateVariable(String name, FieldBinding.Long<T> setter) {
             return coordinateVariable(name, setter);
         }
 
-        public Builder<T> floatCoordinateVariable(String name, FloatSetter<T> setter) {
+        public Builder<T> floatCoordinateVariable(String name, FieldBinding.Float<T> setter) {
             return coordinateVariable(name, setter);
         }
 
-        public Builder<T> doubleCoordinateVariable(String name, DoubleSetter<T> setter) {
+        public Builder<T> doubleCoordinateVariable(String name, FieldBinding.Double<T> setter) {
             return coordinateVariable(name, setter);
         }
 
@@ -282,7 +281,7 @@ public final class SchemaBinding<T> {
          * Optional finalization operation that well be called under the hood before the record is made available in the
          * {@link Stream} output of the {@link NetcdfRecordReader}.
          *
-         * <p>This hook is primarily useful when the template type of the binding is flavor of {@link OutputStream} or a
+         * <p>This hook is primarily useful when the template type of the schema is flavor of {@link OutputStream} or a
          * {@link Writer} implementation and data returned from the file is being directly re-written to that stream but
          * may need a record termination indicator, e.g. a closing brace for a JSON-based output stream or a newline for
          * a plain text based one.

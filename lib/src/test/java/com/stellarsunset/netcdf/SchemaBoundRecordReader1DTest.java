@@ -4,18 +4,17 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import ucar.ma2.DataType;
-import ucar.nc2.NetcdfFile;
 import ucar.nc2.NetcdfFiles;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class SchemaBoundRecordReader1DTest {
 
@@ -36,7 +35,7 @@ class SchemaBoundRecordReader1DTest {
     }
 
     @Test
-    void test1D_BytesOnly() {
+    void test1D_BytesOnly() throws IOException {
 
         var binding = SchemaBinding.<Data1D.Builder>builder()
                 .recordInitializer(Data1D::builder)
@@ -44,11 +43,15 @@ class SchemaBoundRecordReader1DTest {
                 .byteCoordinateVariable("byte", (b, v) -> b.variable("byte", v))
                 .build();
 
-        List<Data1D> data = readAll(binding);
-        assertEquals(90, data.size(), "Should be an element for each (x,y) dimension.");
+        Hypercube.D1<Data1D.Builder> cube = (Hypercube.D1<Data1D.Builder>) Hypercube.schemaBound(
+                NetcdfFiles.open(FILE.getAbsolutePath()),
+                binding
+        );
 
-        Data1D first = data.getFirst();
-        Data1D eightyNine = data.get(89);
+        assertEquals(90, cube.max(), "Max");
+
+        Data1D first = cube.read(0).build();
+        Data1D eightyNine = cube.read(89).build();
 
         assertAll(
                 () -> assertEquals(0, first.x(), "First X"),
@@ -60,7 +63,7 @@ class SchemaBoundRecordReader1DTest {
     }
 
     @Test
-    void test1D_BytesAndDoubles() {
+    void test1D_BytesAndDoubles() throws IOException {
 
         var binding = SchemaBinding.<Data1D.Builder>builder()
                 .recordInitializer(Data1D::builder)
@@ -70,11 +73,15 @@ class SchemaBoundRecordReader1DTest {
                 .doubleCoordinateVariable("double", (b, v) -> b.variable("double", v))
                 .build();
 
-        List<Data1D> data = readAll(binding);
-        assertEquals(90, data.size(), "Should be an element for each (x,y) dimension.");
+        Hypercube.D1<Data1D.Builder> cube = (Hypercube.D1<Data1D.Builder>) Hypercube.schemaBound(
+                NetcdfFiles.open(FILE.getAbsolutePath()),
+                binding
+        );
 
-        Data1D first = data.getFirst();
-        Data1D eightyNine = data.get(89);
+        assertEquals(90, cube.max(), "Max");
+
+        Data1D first = cube.read(0).build();
+        Data1D eightyNine = cube.read(89).build();
 
         assertAll(
                 () -> assertEquals(0, first.x(), "First X"),
@@ -86,31 +93,19 @@ class SchemaBoundRecordReader1DTest {
     }
 
     @Test
-    void test1D_OmitDimensions() {
+    void test1D_OmitDimensions() throws IOException {
 
         var binding = SchemaBinding.<Data1D.Builder>builder()
                 .recordInitializer(Data1D::builder)
                 .byteCoordinateVariable("byte", (b, v) -> b.variable("byte", v))
                 .build();
 
-        List<Data1D> data = readAll(binding);
-        assertEquals(90, data.size(), "Should be an element for each (x,y) dimension.");
-    }
+        Hypercube.D1<Data1D.Builder> cube = (Hypercube.D1<Data1D.Builder>) Hypercube.schemaBound(
+                NetcdfFiles.open(FILE.getAbsolutePath()),
+                binding
+        );
 
-    private List<Data1D> readAll(SchemaBinding<Data1D.Builder> binding) {
-
-        try (NetcdfFile netcdfFile = NetcdfFiles.open(FILE.getAbsolutePath())) {
-
-            var reader = NetcdfRecordReader.schemaBound(binding);
-
-            return reader.read(netcdfFile)
-                    .map(Data1D.Builder::build)
-                    .toList();
-
-        } catch (IOException e) {
-            fail(e);
-            return List.of();
-        }
+        assertEquals(90, cube.max(), "Max");
     }
 
     private record Data1D(int x, Map<String, Object> variables) {
