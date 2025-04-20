@@ -67,7 +67,7 @@ class SchemaBoundHyperCubes {
 
     private static <T> IndexBinding.D1<T> createD1Binding(Variable variable, FieldBinding<T> fieldBinding) {
         try {
-            Array.D1 array = (Array.D1) Array.wrap(variable.read().reduce());
+            Array.D1 array = (Array.D1) Array.wrap(variable.read());
             return array.bindIndex(fieldBinding);
         } catch (ClassCastException e) {
             throw new IllegalStateException("Binding should have already been validated...", e);
@@ -103,7 +103,7 @@ class SchemaBoundHyperCubes {
 
     private static <T> IndexBinding.D2<T> createD2Binding(Variable variable, FieldBinding<T> fieldBinding) {
         try {
-            Array.D2 array = (Array.D2) Array.wrap(variable.read().reduce());
+            Array.D2 array = (Array.D2) Array.wrap(variable.read());
             return array.bindIndex(fieldBinding);
         } catch (ClassCastException e) {
             throw new IllegalStateException("Binding should have already been validated...", e);
@@ -141,7 +141,7 @@ class SchemaBoundHyperCubes {
 
     private static <T> IndexBinding.D3<T> createD3Binding(Variable variable, FieldBinding<T> fieldBinding) {
         try {
-            Array.D3 array = (Array.D3) Array.wrap(variable.read().reduce());
+            Array.D3 array = (Array.D3) Array.wrap(variable.read());
             return array.bindIndex(fieldBinding);
         } catch (ClassCastException e) {
             throw new IllegalStateException("Binding should have already been validated...", e);
@@ -182,7 +182,7 @@ class SchemaBoundHyperCubes {
 
     private static <T> IndexBinding.D4<T> createD4Binding(Variable variable, FieldBinding<T> fieldBinding) {
         try {
-            Array.D4 array = (Array.D4) Array.wrap(variable.read().reduce());
+            Array.D4 array = (Array.D4) Array.wrap(variable.read());
             return array.bindIndex(fieldBinding);
         } catch (ClassCastException e) {
             throw new IllegalStateException("Binding should have already been validated...", e);

@@ -80,7 +80,6 @@ sealed interface IndexBinding<T> {
     @FunctionalInterface
     non-sealed interface D3<T> extends IndexBinding<T> {
 
-
         static <T> D3<T> compose(List<D3<T>> bindings) {
             return bindings.stream().reduce(D3.noop(), D3::combine);
         }

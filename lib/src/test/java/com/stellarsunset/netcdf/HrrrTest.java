@@ -10,6 +10,9 @@ import java.io.IOException;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
 
+/**
+ * To run this unit test modify the build.gradle.kts file to include {@code testImplementation(libs.grib)}.
+ */
 @Disabled("Not committing HRRR to the repo, files are large.")
 class HrrrTest {
 

@@ -4,18 +4,17 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import ucar.ma2.DataType;
-import ucar.nc2.NetcdfFile;
 import ucar.nc2.NetcdfFiles;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class SchemaBoundRecordReader3DTest {
 
@@ -36,7 +35,7 @@ class SchemaBoundRecordReader3DTest {
     }
 
     @Test
-    void test3D_BytesOnly() {
+    void test3D_BytesOnly() throws IOException {
 
         var binding = SchemaBinding.<Data3D.Builder>builder()
                 .recordInitializer(Data3D::builder)
@@ -46,12 +45,20 @@ class SchemaBoundRecordReader3DTest {
                 .byteCoordinateVariable("byte", (b, v) -> b.variable("byte", v))
                 .build();
 
-        List<Data3D> data = readAll(binding);
-        assertEquals(10 * 20 * 30, data.size(), "Should be an element for each (x,y,z) dimension.");
+        Hypercube.D3<Data3D.Builder> cube = (Hypercube.D3<Data3D.Builder>) Hypercube.schemaBound(
+                NetcdfFiles.open(FILE.getAbsolutePath()),
+                binding
+        );
 
-        Data3D first = data.getFirst();
-        Data3D tenth = data.get(10);
-        Data3D twoHundredth = data.get(200);
+        assertAll(
+                () -> assertEquals(10, cube.d0Max(), "D0 Max"),
+                () -> assertEquals(20, cube.d1Max(), "D1 Max"),
+                () -> assertEquals(30, cube.d2Max(), "D2 Max")
+        );
+
+        Data3D first = cube.read(0, 0, 0).build();
+        Data3D tenth = cube.read(0, 0, 10).build();
+        Data3D twoHundredth = cube.read(0, 6, 20).build();
 
         assertAll(
                 () -> assertEquals(0, first.x(), "First X"),
@@ -60,19 +67,19 @@ class SchemaBoundRecordReader3DTest {
                 () -> assertEquals(Set.of("byte"), first.variables().keySet(), "First Variables"),
 
                 () -> assertEquals(0, tenth.x(), "10th X"),
-                () -> assertEquals(1, tenth.y(), "10th Y"),
-                () -> assertEquals(0, tenth.z(), "10th Z"),
+                () -> assertEquals(0, tenth.y(), "10th Y"),
+                () -> assertEquals(10, tenth.z(), "10th Z"),
                 () -> assertEquals(Set.of("byte"), tenth.variables().keySet(), "10th Variables"),
 
                 () -> assertEquals(0, twoHundredth.x(), "200th X"),
-                () -> assertEquals(0, twoHundredth.y(), "200th Y"),
-                () -> assertEquals(1, twoHundredth.z(), "200th Z"),
+                () -> assertEquals(6, twoHundredth.y(), "200th Y"),
+                () -> assertEquals(20, twoHundredth.z(), "200th Z"),
                 () -> assertEquals(Set.of("byte"), tenth.variables().keySet(), "200th Variables")
         );
     }
 
     @Test
-    void test3D_BytesAndDoubles() {
+    void test3D_BytesAndDoubles() throws IOException {
 
         var binding = SchemaBinding.<Data3D.Builder>builder()
                 .recordInitializer(Data3D::builder)
@@ -84,12 +91,21 @@ class SchemaBoundRecordReader3DTest {
                 .doubleCoordinateVariable("double", (b, v) -> b.variable("double", v))
                 .build();
 
-        List<Data3D> data = readAll(binding);
-        assertEquals(10 * 20 * 30, data.size(), "Should be an element for each (x,y,z) dimension.");
+        Hypercube.D3<Data3D.Builder> cube = (Hypercube.D3<Data3D.Builder>) Hypercube.schemaBound(
+                NetcdfFiles.open(FILE.getAbsolutePath()),
+                binding
+        );
 
-        Data3D first = data.getFirst();
-        Data3D tenth = data.get(10);
-        Data3D twoHundredth = data.get(200);
+        assertAll(
+                () -> assertEquals(10, cube.d0Max(), "D0 Max"),
+                () -> assertEquals(20, cube.d1Max(), "D1 Max"),
+                () -> assertEquals(30, cube.d2Max(), "D2 Max")
+        );
+
+        Data3D first = cube.read(0, 0, 0).build();
+        Data3D tenth = cube.read(0, 0, 10).build();
+        Data3D twoHundredth = cube.read(0, 6, 20).build();
+
 
         assertAll(
                 () -> assertEquals(0, first.x(), "First X"),
@@ -98,43 +114,35 @@ class SchemaBoundRecordReader3DTest {
                 () -> assertEquals(Set.of("byte", "int", "double"), first.variables().keySet(), "First Variables"),
 
                 () -> assertEquals(0, tenth.x(), "10th X"),
-                () -> assertEquals(1, tenth.y(), "10th Y"),
-                () -> assertEquals(0, tenth.z(), "10th Z"),
+                () -> assertEquals(0, tenth.y(), "10th Y"),
+                () -> assertEquals(10, tenth.z(), "10th Z"),
                 () -> assertEquals(Set.of("byte", "int", "double"), tenth.variables().keySet(), "10th Variables"),
 
                 () -> assertEquals(0, twoHundredth.x(), "200th X"),
-                () -> assertEquals(0, twoHundredth.y(), "200th Y"),
-                () -> assertEquals(1, twoHundredth.z(), "200th Z"),
+                () -> assertEquals(6, twoHundredth.y(), "200th Y"),
+                () -> assertEquals(20, twoHundredth.z(), "200th Z"),
                 () -> assertEquals(Set.of("byte", "int", "double"), tenth.variables().keySet(), "200th Variables")
         );
     }
 
     @Test
-    void test3D_OmitDimensions() {
+    void test3D_OmitDimensions() throws IOException {
 
         var binding = SchemaBinding.<Data3D.Builder>builder()
                 .recordInitializer(Data3D::builder)
                 .byteCoordinateVariable("byte", (b, v) -> b.variable("byte", v))
                 .build();
 
-        List<Data3D> data = readAll(binding);
-        assertEquals(10 * 20 * 30, data.size(), "Should be an element for each (x,y,z) dimension.");
-    }
+        Hypercube.D3<Data3D.Builder> cube = (Hypercube.D3<Data3D.Builder>) Hypercube.schemaBound(
+                NetcdfFiles.open(FILE.getAbsolutePath()),
+                binding
+        );
 
-    private List<Data3D> readAll(SchemaBinding<Data3D.Builder> binding) {
-
-        try (NetcdfFile netcdfFile = NetcdfFiles.open(FILE.getAbsolutePath())) {
-
-            var reader = NetcdfRecordReader.schemaBound(binding);
-
-            return reader.read(netcdfFile)
-                    .map(Data3D.Builder::build)
-                    .toList();
-
-        } catch (IOException e) {
-            fail(e);
-            return List.of();
-        }
+        assertAll(
+                () -> assertEquals(10, cube.d0Max(), "D0 Max"),
+                () -> assertEquals(20, cube.d1Max(), "D1 Max"),
+                () -> assertEquals(30, cube.d2Max(), "D2 Max")
+        );
     }
 
     private record Data3D(int x, int y, int z, Map<String, Object> variables) {

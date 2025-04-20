@@ -27,6 +27,7 @@ dependencies {
     implementation(libs.slf4j.api)
 
     testImplementation(libs.junit.jupiter)
+    testImplementation(libs.grib)
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
 

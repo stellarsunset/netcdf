@@ -110,16 +110,16 @@ public sealed interface Hypercube<T> extends AutoCloseable {
 
             @Override
             public boolean hasNext() {
-                return i0 < cube.d0Max() & i1 < cube.d1Max();
+                return i0 < cube.d0Max() && i1 < cube.d1Max();
             }
 
             @Override
             public T next() {
                 T t = cube.read(i0, i1);
-                i0++;
-                if (i0 > cube.d0Max()) {
-                    i1++;
-                    i0 = 0;
+                i1++;
+                if (i1 >= cube.d1Max()) {
+                    i0++;
+                    i1 = 0;
                 }
                 return t;
             }
@@ -166,13 +166,13 @@ public sealed interface Hypercube<T> extends AutoCloseable {
             @Override
             public T next() {
                 T t = cube.read(i0, i1, i2);
-                i0++;
-                if (i0 > cube.d0Max()) {
+                i2++;
+                if (i2 >= cube.d2Max()) {
                     i1++;
-                    i0 = 0;
+                    i2 = 0;
                 }
-                if (i1 > cube.d1Max()) {
-                    i2++;
+                if (i1 >= cube.d1Max()) {
+                    i0++;
                     i1 = 0;
                 }
                 return t;
@@ -223,18 +223,18 @@ public sealed interface Hypercube<T> extends AutoCloseable {
             @Override
             public T next() {
                 T t = cube.read(i0, i1, i2, i3);
-                i0++;
-                if (i0 > cube.d0Max()) {
-                    i1++;
-                    i0 = 0;
-                }
-                if (i1 > cube.d1Max()) {
+                i3++;
+                if (i3 >= cube.d3Max()) {
                     i2++;
-                    i1 = 0;
+                    i3 = 0;
                 }
-                if (i2 > cube.d2Max()) {
-                    i3++;
+                if (i2 >= cube.d2Max()) {
+                    i1++;
                     i2 = 0;
+                }
+                if (i1 >= cube.d1Max()) {
+                    i0++;
+                    i1 = 0;
                 }
                 return t;
             }

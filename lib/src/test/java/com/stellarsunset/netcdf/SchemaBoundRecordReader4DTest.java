@@ -4,18 +4,17 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import ucar.ma2.DataType;
-import ucar.nc2.NetcdfFile;
 import ucar.nc2.NetcdfFiles;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class SchemaBoundRecordReader4DTest {
 
@@ -36,7 +35,7 @@ class SchemaBoundRecordReader4DTest {
     }
 
     @Test
-    void test3D_BytesOnly() {
+    void test4D_BytesOnly() throws IOException {
 
         var binding = SchemaBinding.<Data4D.Builder>builder()
                 .recordInitializer(Data4D::builder)
@@ -47,13 +46,22 @@ class SchemaBoundRecordReader4DTest {
                 .byteCoordinateVariable("byte", (b, v) -> b.variable("byte", v))
                 .build();
 
-        List<Data4D> data = readAll(binding);
-        assertEquals(10 * 20 * 30 * 40, data.size(), "Should be an element for each (x,y,z,t) dimension.");
+        Hypercube.D4<Data4D.Builder> cube = (Hypercube.D4<Data4D.Builder>) Hypercube.schemaBound(
+                NetcdfFiles.open(FILE.getAbsolutePath()),
+                binding
+        );
 
-        Data4D first = data.getFirst();
-        Data4D tenth = data.get(10);
-        Data4D twoHundredth = data.get(200);
-        Data4D sixThousandth = data.get(6000);
+        assertAll(
+                () -> assertEquals(10, cube.d0Max(), "D0 Max"),
+                () -> assertEquals(20, cube.d1Max(), "D1 Max"),
+                () -> assertEquals(30, cube.d2Max(), "D2 Max"),
+                () -> assertEquals(40, cube.d3Max(), "D3 Max")
+        );
+
+        Data4D first = cube.read(0, 0, 0, 0).build();
+        Data4D tenth = cube.read(0, 0, 0, 10).build();
+        Data4D twoHundredth = cube.read(0, 0, 5, 0).build();
+        Data4D sixThousandth = cube.read(0, 5, 0, 0).build();
 
         assertAll(
                 () -> assertEquals(0, first.x(), "First X"),
@@ -63,27 +71,27 @@ class SchemaBoundRecordReader4DTest {
                 () -> assertEquals(Set.of("byte"), first.variables().keySet(), "First Variables"),
 
                 () -> assertEquals(0, tenth.x(), "10th X"),
-                () -> assertEquals(1, tenth.y(), "10th Y"),
+                () -> assertEquals(0, tenth.y(), "10th Y"),
                 () -> assertEquals(0, tenth.z(), "10th Z"),
-                () -> assertEquals(0, tenth.t(), "10th T"),
+                () -> assertEquals(10, tenth.t(), "10th T"),
                 () -> assertEquals(Set.of("byte"), tenth.variables().keySet(), "10th Variables"),
 
                 () -> assertEquals(0, twoHundredth.x(), "200th X"),
                 () -> assertEquals(0, twoHundredth.y(), "200th Y"),
-                () -> assertEquals(1, twoHundredth.z(), "200th Z"),
+                () -> assertEquals(5, twoHundredth.z(), "200th Z"),
                 () -> assertEquals(0, twoHundredth.t(), "200th T"),
                 () -> assertEquals(Set.of("byte"), twoHundredth.variables().keySet(), "200th Variables"),
 
                 () -> assertEquals(0, sixThousandth.x(), "6000th X"),
-                () -> assertEquals(0, sixThousandth.y(), "6000th Y"),
+                () -> assertEquals(5, sixThousandth.y(), "6000th Y"),
                 () -> assertEquals(0, sixThousandth.z(), "6000th Z"),
-                () -> assertEquals(1, sixThousandth.t(), "6000th T"),
+                () -> assertEquals(0, sixThousandth.t(), "6000th T"),
                 () -> assertEquals(Set.of("byte"), sixThousandth.variables().keySet(), "6000th Variables")
         );
     }
 
     @Test
-    void test3D_BytesAndDoubles() {
+    void test3D_BytesAndDoubles() throws IOException {
 
         var binding = SchemaBinding.<Data4D.Builder>builder()
                 .recordInitializer(Data4D::builder)
@@ -96,13 +104,22 @@ class SchemaBoundRecordReader4DTest {
                 .doubleCoordinateVariable("double", (b, v) -> b.variable("double", v))
                 .build();
 
-        List<Data4D> data = readAll(binding);
-        assertEquals(10 * 20 * 30 * 40, data.size(), "Should be an element for each (x,y,z,t) dimension.");
+        Hypercube.D4<Data4D.Builder> cube = (Hypercube.D4<Data4D.Builder>) Hypercube.schemaBound(
+                NetcdfFiles.open(FILE.getAbsolutePath()),
+                binding
+        );
 
-        Data4D first = data.getFirst();
-        Data4D tenth = data.get(10);
-        Data4D twoHundredth = data.get(200);
-        Data4D sixThousandth = data.get(6000);
+        assertAll(
+                () -> assertEquals(10, cube.d0Max(), "D0 Max"),
+                () -> assertEquals(20, cube.d1Max(), "D1 Max"),
+                () -> assertEquals(30, cube.d2Max(), "D2 Max"),
+                () -> assertEquals(40, cube.d3Max(), "D3 Max")
+        );
+
+        Data4D first = cube.read(0, 0, 0, 0).build();
+        Data4D tenth = cube.read(0, 0, 0, 10).build();
+        Data4D twoHundredth = cube.read(0, 0, 5, 0).build();
+        Data4D sixThousandth = cube.read(0, 5, 0, 0).build();
 
         assertAll(
                 () -> assertEquals(0, first.x(), "First X"),
@@ -112,51 +129,44 @@ class SchemaBoundRecordReader4DTest {
                 () -> assertEquals(Set.of("byte", "int", "double"), first.variables().keySet(), "First Variables"),
 
                 () -> assertEquals(0, tenth.x(), "10th X"),
-                () -> assertEquals(1, tenth.y(), "10th Y"),
+                () -> assertEquals(0, tenth.y(), "10th Y"),
                 () -> assertEquals(0, tenth.z(), "10th Z"),
-                () -> assertEquals(0, tenth.t(), "10th T"),
+                () -> assertEquals(10, tenth.t(), "10th T"),
                 () -> assertEquals(Set.of("byte", "int", "double"), tenth.variables().keySet(), "10th Variables"),
 
                 () -> assertEquals(0, twoHundredth.x(), "200th X"),
                 () -> assertEquals(0, twoHundredth.y(), "200th Y"),
-                () -> assertEquals(1, twoHundredth.z(), "200th Z"),
+                () -> assertEquals(5, twoHundredth.z(), "200th Z"),
                 () -> assertEquals(0, twoHundredth.t(), "200th T"),
                 () -> assertEquals(Set.of("byte", "int", "double"), twoHundredth.variables().keySet(), "200th Variables"),
 
                 () -> assertEquals(0, sixThousandth.x(), "6000th X"),
-                () -> assertEquals(0, sixThousandth.y(), "6000th Y"),
+                () -> assertEquals(5, sixThousandth.y(), "6000th Y"),
                 () -> assertEquals(0, sixThousandth.z(), "6000th Z"),
-                () -> assertEquals(1, sixThousandth.t(), "6000th T"),
+                () -> assertEquals(0, sixThousandth.t(), "6000th T"),
                 () -> assertEquals(Set.of("byte", "int", "double"), sixThousandth.variables().keySet(), "6000th Variables")
         );
     }
 
     @Test
-    void test3D_OmitDimensions() {
+    void test3D_OmitDimensions() throws IOException {
 
         var binding = SchemaBinding.<Data4D.Builder>builder()
                 .recordInitializer(Data4D::builder)
                 .byteCoordinateVariable("byte", (b, v) -> b.variable("byte", v))
                 .build();
 
-        List<Data4D> data = readAll(binding);
-        assertEquals(10 * 20 * 30 * 40, data.size(), "Should be an element for each (x,y,z,t) dimension.");
-    }
+        Hypercube.D4<Data4D.Builder> cube = (Hypercube.D4<Data4D.Builder>) Hypercube.schemaBound(
+                NetcdfFiles.open(FILE.getAbsolutePath()),
+                binding
+        );
 
-    private List<Data4D> readAll(SchemaBinding<Data4D.Builder> binding) {
-
-        try (NetcdfFile netcdfFile = NetcdfFiles.open(FILE.getAbsolutePath())) {
-
-            var reader = NetcdfRecordReader.schemaBound(binding);
-
-            return reader.read(netcdfFile)
-                    .map(Data4D.Builder::build)
-                    .toList();
-
-        } catch (IOException e) {
-            fail(e);
-            return List.of();
-        }
+        assertAll(
+                () -> assertEquals(10, cube.d0Max(), "D0 Max"),
+                () -> assertEquals(20, cube.d1Max(), "D1 Max"),
+                () -> assertEquals(30, cube.d2Max(), "D2 Max"),
+                () -> assertEquals(40, cube.d3Max(), "D3 Max")
+        );
     }
 
     private record Data4D(int x, int y, int z, int t, Map<String, Object> variables) {

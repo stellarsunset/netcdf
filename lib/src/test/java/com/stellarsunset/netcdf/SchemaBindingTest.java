@@ -150,7 +150,7 @@ class SchemaBindingTest {
                 .booleanCoordinateVariable("var", (s, v) -> s + v)
                 .build();
 
-        assertInstanceOf(FieldBinding.Char.class, binding.coordinateVariableBinding("var"), "Should be a Bool binding");
+        assertInstanceOf(FieldBinding.Bool.class, binding.coordinateVariableBinding("var"), "Should be a Bool binding");
     }
 
     @Test

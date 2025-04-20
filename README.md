@@ -46,8 +46,15 @@ var binding = SchemaBinding.<Measurement.Builder>builder()
 // To read alternate file types add the appropriate runtime dependency, e.g. runtimeOnly(edu.ucar:grib) for grib2
 NetcdfFile file = NetcdfFiles.open("/path/to/some/file.nc");
 
-Stream<Measurement> measurements = NetcdfRecordReader.schemaBound(binding).read(file)
-        .map(Measurement.Builder::build);
+// Creates a Hypercube whose subtypes support index-based access
+Hypercube<Measurement> cube = Hypercube.schemaBound(file, binding);
+
+// It's a 3D cube as there are only x, y, z dimensions
+Hypercube.D3<Measurement> d3Cube = (Hypercube.D3<Measurement>) cube;
+Measurement aMeasurement = d3Cube.get(0, 0, 0);
+
+// Or stream all the measurements out of the cube
+Stream<Measurement> measurements = cube.stream().map(Measurement.Builder::build);
 ```
 
 ### Notes

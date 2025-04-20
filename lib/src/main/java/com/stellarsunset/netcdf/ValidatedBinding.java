@@ -10,6 +10,7 @@ import ucar.nc2.Variable;
 
 import java.io.IOException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.joining;
@@ -51,6 +52,12 @@ sealed interface ValidatedBinding<T> extends AutoCloseable {
         context().close();
     }
 
+    private static <T> Variable anyVariable(ValidatedBinding<T> binding) {
+        Variable anyVariable = binding.context()
+                .findVariable(binding.schema().coordinateVariables().entrySet().iterator().next().getKey());
+        return requireNonNull(anyVariable, "Variable should always be present in a validated binding.");
+    }
+
     /**
      * Returns the length of the dimension at the provided index.
      *
@@ -61,11 +68,7 @@ sealed interface ValidatedBinding<T> extends AutoCloseable {
      * @param index   the index of the dimension we want the length of
      */
     private static <T> int dimensionSize(ValidatedBinding<T> binding, int index) {
-        Variable anyVariable = binding.context()
-                .findVariable(binding.schema().coordinateVariables().entrySet().iterator().next().getKey());
-
-        requireNonNull(anyVariable, "Variable should always be present in a validated binding.");
-        return anyVariable.getDimension(index).getLength();
+        return anyVariable(binding).getDimension(index).getLength();
     }
 
     /**
@@ -78,7 +81,13 @@ sealed interface ValidatedBinding<T> extends AutoCloseable {
      * @param index   the index of the dimension we want the variables for
      */
     private static <T> Map<String, FieldBinding<T>> dimensionVariables(ValidatedBinding<T> binding, int index) {
-        return Map.of();
+
+        Variable anyVariable = anyVariable(binding);
+        Dimension dimension = anyVariable.getDimension(index);
+
+        return binding.schema().dimensionVariables().entrySet().stream()
+                .filter(entry -> requireNonNull(binding.context().findVariable(entry.getKey())).getDimension(0).equals(dimension))
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 
     record D0<T>(NetcdfFile context, SchemaBinding<T> schema) implements ValidatedBinding<T> {
@@ -181,7 +190,7 @@ sealed interface ValidatedBinding<T> extends AutoCloseable {
          */
         Either<ValidatedBinding<T>, Error> validate() {
             // this order does matter, if the variable exists then the dimensions do too, saving us some checks
-            return checkVariables().map(Either::<ValidatedBinding<T>, Error>ofRight).orElse(checkDimensions());
+            return checkVariables().map(Either::<ValidatedBinding<T>, Error>ofRight).orElseGet(this::checkDimensions);
         }
 
         /**
