@@ -46,10 +46,10 @@ class SchemaBoundRecordReader4DTest {
                 .byteCoordinateVariable("byte", (b, v) -> b.variable("byte", v))
                 .build();
 
-        Hypercube.D4<Data4D.Builder> cube = (Hypercube.D4<Data4D.Builder>) Hypercube.schemaBound(
+        Hypercube.D4<Data4D> cube = (Hypercube.D4<Data4D>) Hypercube.schemaBound(
                 NetcdfFiles.open(FILE.getAbsolutePath()),
                 binding
-        );
+        ).transform(Data4D.Builder::build);
 
         assertAll(
                 () -> assertEquals(10, cube.d0Max(), "D0 Max"),
@@ -58,10 +58,10 @@ class SchemaBoundRecordReader4DTest {
                 () -> assertEquals(40, cube.d3Max(), "D3 Max")
         );
 
-        Data4D first = cube.read(0, 0, 0, 0).build();
-        Data4D tenth = cube.read(0, 0, 0, 10).build();
-        Data4D twoHundredth = cube.read(0, 0, 5, 0).build();
-        Data4D sixThousandth = cube.read(0, 5, 0, 0).build();
+        Data4D first = cube.read(0, 0, 0, 0);
+        Data4D tenth = cube.read(0, 0, 0, 10);
+        Data4D twoHundredth = cube.read(0, 0, 5, 0);
+        Data4D sixThousandth = cube.read(0, 5, 0, 0);
 
         assertAll(
                 () -> assertEquals(0, first.x(), "First X"),
@@ -104,10 +104,10 @@ class SchemaBoundRecordReader4DTest {
                 .doubleCoordinateVariable("double", (b, v) -> b.variable("double", v))
                 .build();
 
-        Hypercube.D4<Data4D.Builder> cube = (Hypercube.D4<Data4D.Builder>) Hypercube.schemaBound(
+        Hypercube.D4<Data4D> cube = (Hypercube.D4<Data4D>) Hypercube.schemaBound(
                 NetcdfFiles.open(FILE.getAbsolutePath()),
                 binding
-        );
+        ).transform(Data4D.Builder::build);
 
         assertAll(
                 () -> assertEquals(10, cube.d0Max(), "D0 Max"),
@@ -116,10 +116,10 @@ class SchemaBoundRecordReader4DTest {
                 () -> assertEquals(40, cube.d3Max(), "D3 Max")
         );
 
-        Data4D first = cube.read(0, 0, 0, 0).build();
-        Data4D tenth = cube.read(0, 0, 0, 10).build();
-        Data4D twoHundredth = cube.read(0, 0, 5, 0).build();
-        Data4D sixThousandth = cube.read(0, 5, 0, 0).build();
+        Data4D first = cube.read(0, 0, 0, 0);
+        Data4D tenth = cube.read(0, 0, 0, 10);
+        Data4D twoHundredth = cube.read(0, 0, 5, 0);
+        Data4D sixThousandth = cube.read(0, 5, 0, 0);
 
         assertAll(
                 () -> assertEquals(0, first.x(), "First X"),
@@ -155,11 +155,11 @@ class SchemaBoundRecordReader4DTest {
                 .recordInitializer(Data4D::builder)
                 .byteCoordinateVariable("byte", (b, v) -> b.variable("byte", v))
                 .build();
-
-        Hypercube.D4<Data4D.Builder> cube = (Hypercube.D4<Data4D.Builder>) Hypercube.schemaBound(
+        
+        Hypercube.D4<Data4D> cube = (Hypercube.D4<Data4D>) Hypercube.schemaBound(
                 NetcdfFiles.open(FILE.getAbsolutePath()),
                 binding
-        );
+        ).transform(Data4D.Builder::build);
 
         assertAll(
                 () -> assertEquals(10, cube.d0Max(), "D0 Max"),

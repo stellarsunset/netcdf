@@ -45,10 +45,10 @@ class SchemaBoundRecordReader3DTest {
                 .byteCoordinateVariable("byte", (b, v) -> b.variable("byte", v))
                 .build();
 
-        Hypercube.D3<Data3D.Builder> cube = (Hypercube.D3<Data3D.Builder>) Hypercube.schemaBound(
+        Hypercube.D3<Data3D> cube = (Hypercube.D3<Data3D>) Hypercube.schemaBound(
                 NetcdfFiles.open(FILE.getAbsolutePath()),
                 binding
-        );
+        ).transform(Data3D.Builder::build);
 
         assertAll(
                 () -> assertEquals(10, cube.d0Max(), "D0 Max"),
@@ -56,9 +56,9 @@ class SchemaBoundRecordReader3DTest {
                 () -> assertEquals(30, cube.d2Max(), "D2 Max")
         );
 
-        Data3D first = cube.read(0, 0, 0).build();
-        Data3D tenth = cube.read(0, 0, 10).build();
-        Data3D twoHundredth = cube.read(0, 6, 20).build();
+        Data3D first = cube.read(0, 0, 0);
+        Data3D tenth = cube.read(0, 0, 10);
+        Data3D twoHundredth = cube.read(0, 6, 20);
 
         assertAll(
                 () -> assertEquals(0, first.x(), "First X"),
@@ -91,10 +91,10 @@ class SchemaBoundRecordReader3DTest {
                 .doubleCoordinateVariable("double", (b, v) -> b.variable("double", v))
                 .build();
 
-        Hypercube.D3<Data3D.Builder> cube = (Hypercube.D3<Data3D.Builder>) Hypercube.schemaBound(
+        Hypercube.D3<Data3D> cube = (Hypercube.D3<Data3D>) Hypercube.schemaBound(
                 NetcdfFiles.open(FILE.getAbsolutePath()),
                 binding
-        );
+        ).transform(Data3D.Builder::build);
 
         assertAll(
                 () -> assertEquals(10, cube.d0Max(), "D0 Max"),
@@ -102,10 +102,9 @@ class SchemaBoundRecordReader3DTest {
                 () -> assertEquals(30, cube.d2Max(), "D2 Max")
         );
 
-        Data3D first = cube.read(0, 0, 0).build();
-        Data3D tenth = cube.read(0, 0, 10).build();
-        Data3D twoHundredth = cube.read(0, 6, 20).build();
-
+        Data3D first = cube.read(0, 0, 0);
+        Data3D tenth = cube.read(0, 0, 10);
+        Data3D twoHundredth = cube.read(0, 6, 20);
 
         assertAll(
                 () -> assertEquals(0, first.x(), "First X"),
@@ -133,10 +132,10 @@ class SchemaBoundRecordReader3DTest {
                 .byteCoordinateVariable("byte", (b, v) -> b.variable("byte", v))
                 .build();
 
-        Hypercube.D3<Data3D.Builder> cube = (Hypercube.D3<Data3D.Builder>) Hypercube.schemaBound(
+        Hypercube.D3<Data3D> cube = (Hypercube.D3<Data3D>) Hypercube.schemaBound(
                 NetcdfFiles.open(FILE.getAbsolutePath()),
                 binding
-        );
+        ).transform(Data3D.Builder::build);
 
         assertAll(
                 () -> assertEquals(10, cube.d0Max(), "D0 Max"),

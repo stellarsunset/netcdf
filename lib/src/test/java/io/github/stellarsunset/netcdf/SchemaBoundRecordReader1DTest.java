@@ -43,15 +43,15 @@ class SchemaBoundRecordReader1DTest {
                 .byteCoordinateVariable("byte", (b, v) -> b.variable("byte", v))
                 .build();
 
-        Hypercube.D1<Data1D.Builder> cube = (Hypercube.D1<Data1D.Builder>) Hypercube.schemaBound(
+        Hypercube.D1<Data1D> cube = (Hypercube.D1<Data1D>) Hypercube.schemaBound(
                 NetcdfFiles.open(FILE.getAbsolutePath()),
                 binding
-        );
+        ).transform(Data1D.Builder::build);
 
         assertEquals(90, cube.max(), "Max");
 
-        Data1D first = cube.read(0).build();
-        Data1D eightyNine = cube.read(89).build();
+        Data1D first = cube.read(0);
+        Data1D eightyNine = cube.read(89);
 
         assertAll(
                 () -> assertEquals(0, first.x(), "First X"),
@@ -73,15 +73,15 @@ class SchemaBoundRecordReader1DTest {
                 .doubleCoordinateVariable("double", (b, v) -> b.variable("double", v))
                 .build();
 
-        Hypercube.D1<Data1D.Builder> cube = (Hypercube.D1<Data1D.Builder>) Hypercube.schemaBound(
+        Hypercube.D1<Data1D> cube = (Hypercube.D1<Data1D>) Hypercube.schemaBound(
                 NetcdfFiles.open(FILE.getAbsolutePath()),
                 binding
-        );
+        ).transform(Data1D.Builder::build);
 
         assertEquals(90, cube.max(), "Max");
 
-        Data1D first = cube.read(0).build();
-        Data1D eightyNine = cube.read(89).build();
+        Data1D first = cube.read(0);
+        Data1D eightyNine = cube.read(89);
 
         assertAll(
                 () -> assertEquals(0, first.x(), "First X"),
@@ -100,10 +100,10 @@ class SchemaBoundRecordReader1DTest {
                 .byteCoordinateVariable("byte", (b, v) -> b.variable("byte", v))
                 .build();
 
-        Hypercube.D1<Data1D.Builder> cube = (Hypercube.D1<Data1D.Builder>) Hypercube.schemaBound(
+        Hypercube.D1<Data1D> cube = (Hypercube.D1<Data1D>) Hypercube.schemaBound(
                 NetcdfFiles.open(FILE.getAbsolutePath()),
                 binding
-        );
+        ).transform(Data1D.Builder::build);
 
         assertEquals(90, cube.max(), "Max");
     }

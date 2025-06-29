@@ -44,18 +44,18 @@ class SchemaBoundRecordReader2DTest {
                 .byteCoordinateVariable("byte", (b, v) -> b.variable("byte", v))
                 .build();
 
-        Hypercube.D2<Data2D.Builder> cube = (Hypercube.D2<Data2D.Builder>) Hypercube.schemaBound(
+        Hypercube.D2<Data2D> cube = (Hypercube.D2<Data2D>) Hypercube.schemaBound(
                 NetcdfFiles.open(FILE.getAbsolutePath()),
                 binding
-        );
+        ).transform(Data2D.Builder::build);
 
         assertAll(
                 () -> assertEquals(90, cube.d0Max(), "D0 Max"),
                 () -> assertEquals(180, cube.d1Max(), "D1 Max")
         );
 
-        Data2D first = cube.read(0, 0).build();
-        Data2D ninety = cube.read(40, 100).build();
+        Data2D first = cube.read(0, 0);
+        Data2D ninety = cube.read(40, 100);
 
         assertAll(
                 () -> assertEquals(0, first.x(), "First X"),
@@ -80,18 +80,18 @@ class SchemaBoundRecordReader2DTest {
                 .doubleCoordinateVariable("double", (b, v) -> b.variable("double", v))
                 .build();
 
-        Hypercube.D2<Data2D.Builder> cube = (Hypercube.D2<Data2D.Builder>) Hypercube.schemaBound(
+        Hypercube.D2<Data2D> cube = (Hypercube.D2<Data2D>) Hypercube.schemaBound(
                 NetcdfFiles.open(FILE.getAbsolutePath()),
                 binding
-        );
+        ).transform(Data2D.Builder::build);
 
         assertAll(
                 () -> assertEquals(90, cube.d0Max(), "D0 Max"),
                 () -> assertEquals(180, cube.d1Max(), "D1 Max")
         );
 
-        Data2D first = cube.read(0, 0).build();
-        Data2D ninety = cube.read(0, 90).build();
+        Data2D first = cube.read(0, 0);
+        Data2D ninety = cube.read(0, 90);
 
         assertAll(
                 () -> assertEquals(0, first.x(), "First X"),
@@ -112,10 +112,10 @@ class SchemaBoundRecordReader2DTest {
                 .byteCoordinateVariable("byte", (b, v) -> b.variable("byte", v))
                 .build();
 
-        Hypercube.D2<Data2D.Builder> cube = (Hypercube.D2<Data2D.Builder>) Hypercube.schemaBound(
+        Hypercube.D2<Data2D> cube = (Hypercube.D2<Data2D>) Hypercube.schemaBound(
                 NetcdfFiles.open(FILE.getAbsolutePath()),
                 binding
-        );
+        ).transform(Data2D.Builder::build);
 
         assertAll(
                 () -> assertEquals(90, cube.d0Max(), "D0 Max"),
