@@ -1,6 +1,6 @@
 [versions]
 commons = "1.0.1"
-netcdf = "5.5.3"
+netcdf = "5.9.0"
 guava = "32.1.3-jre"
 slf4j = "2.0.17"
 junit-jupiter = "5.13.4"
