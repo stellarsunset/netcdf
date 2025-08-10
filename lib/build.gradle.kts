@@ -1,12 +1,11 @@
 import com.vanniktech.maven.publish.JavaLibrary
 import com.vanniktech.maven.publish.JavadocJar
-import com.vanniktech.maven.publish.SonatypeHost
 
 plugins {
     `java-library`
     jacoco
     id("io.github.stellarsunset.auto-semver") version "0.0.6"
-    id("com.vanniktech.maven.publish") version "0.28.0"
+    id("com.vanniktech.maven.publish") version "0.34.0"
 }
 
 repositories {
@@ -57,7 +56,7 @@ tasks.check {
 mavenPublishing {
     configure(JavaLibrary(javadocJar = JavadocJar.Javadoc(), sourcesJar = true))
 
-    publishToMavenCentral(SonatypeHost.CENTRAL_PORTAL, automaticRelease = true)
+    publishToMavenCentral(automaticRelease = true)
 
     coordinates("io.github.stellarsunset", "netcdf", project.version.toString())
 
