@@ -1,5 +1,5 @@
 [versions]
-commons = "2.0.3"
+commons = "2.0.4"
 netcdf = "5.10.0"
 guava = "33.6.0-jre"
 slf4j = "2.0.18"
