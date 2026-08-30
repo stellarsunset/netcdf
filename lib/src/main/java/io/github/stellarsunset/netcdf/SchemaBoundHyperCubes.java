@@ -310,6 +310,7 @@ class SchemaBoundHyperCubes {
       Consumer<T> finalizer)
       implements Hypercube.D4<T> {
 
+    @Override
     public T read(int x, int y, int z, int t) {
       T r =
           coordinatesSetter.set(

@@ -1,9 +1,10 @@
+# Managed by io.github.stellarsunset.java-conventions 0.0.6 - regenerate with
+# ./gradlew applyRepoTemplate; do not hand-edit.
 #
 # https://help.github.com/articles/dealing-with-line-endings/
-#
+
 # Linux start script should use lf
 /gradlew        text eol=lf
 
 # These are Windows script files and should use crlf
 *.bat           text eol=crlf
-

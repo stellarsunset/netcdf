@@ -191,32 +191,32 @@ class SchemaBoundRecordReader4DTest {
 
       private Builder() {}
 
-      public Builder x(int x) {
+      Builder x(int x) {
         this.x = x;
         return this;
       }
 
-      public Builder y(int y) {
+      Builder y(int y) {
         this.y = y;
         return this;
       }
 
-      public Builder z(int z) {
+      Builder z(int z) {
         this.z = z;
         return this;
       }
 
-      public Builder t(int t) {
+      Builder t(int t) {
         this.t = t;
         return this;
       }
 
-      public Builder variable(String name, Object value) {
+      Builder variable(String name, Object value) {
         this.variables.put(name, value);
         return this;
       }
 
-      public Data4D build() {
+      Data4D build() {
         return new Data4D(this);
       }
     }

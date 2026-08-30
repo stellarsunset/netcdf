@@ -128,17 +128,17 @@ class SchemaBoundRecordReader1DTest {
 
       private Builder() {}
 
-      public Builder x(int x) {
+      Builder x(int x) {
         this.x = x;
         return this;
       }
 
-      public Builder variable(String name, Object value) {
+      Builder variable(String name, Object value) {
         this.variables.put(name, value);
         return this;
       }
 
-      public Data1D build() {
+      Data1D build() {
         return new Data1D(this);
       }
     }
