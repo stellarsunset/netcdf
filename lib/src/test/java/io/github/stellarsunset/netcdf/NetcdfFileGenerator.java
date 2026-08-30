@@ -51,12 +51,12 @@ sealed interface NetcdfFileGenerator {
 
       builder.setFill(true);
 
-      ArrayInt xData = makeDimensionArray(maxX);
+      ArrayInt dataX = makeDimensionArray(maxX);
 
       try (NetcdfFormatWriter writer = builder.build()) {
 
         Variable varX = writer.findVariable("x");
-        writer.write(varX, xData);
+        writer.write(varX, dataX);
 
       } catch (InvalidRangeException e) {
         throw new IllegalArgumentException("Bad range for write.", e);
@@ -98,16 +98,16 @@ sealed interface NetcdfFileGenerator {
 
       builder.setFill(true);
 
-      ArrayInt xData = makeDimensionArray(maxX);
-      ArrayInt yData = makeDimensionArray(maxY);
+      ArrayInt dataX = makeDimensionArray(maxX);
+      ArrayInt dataY = makeDimensionArray(maxY);
 
       try (NetcdfFormatWriter writer = builder.build()) {
 
         Variable varX = writer.findVariable("x");
-        writer.write(varX, xData);
+        writer.write(varX, dataX);
 
         Variable varY = writer.findVariable("y");
-        writer.write(varY, yData);
+        writer.write(varY, dataY);
 
       } catch (InvalidRangeException e) {
         throw new IllegalArgumentException("Bad range for write.", e);
@@ -151,20 +151,20 @@ sealed interface NetcdfFileGenerator {
 
       builder.setFill(true);
 
-      ArrayInt xData = makeDimensionArray(maxX);
-      ArrayInt yData = makeDimensionArray(maxY);
-      ArrayInt zData = makeDimensionArray(maxZ);
+      ArrayInt dataX = makeDimensionArray(maxX);
+      ArrayInt dataY = makeDimensionArray(maxY);
+      ArrayInt dataZ = makeDimensionArray(maxZ);
 
       try (NetcdfFormatWriter writer = builder.build()) {
 
         Variable varX = writer.findVariable("x");
-        writer.write(varX, xData);
+        writer.write(varX, dataX);
 
         Variable varY = writer.findVariable("y");
-        writer.write(varY, yData);
+        writer.write(varY, dataY);
 
         Variable varZ = writer.findVariable("z");
-        writer.write(varZ, zData);
+        writer.write(varZ, dataZ);
 
       } catch (InvalidRangeException e) {
         throw new IllegalArgumentException("Bad range for write.", e);
@@ -210,24 +210,24 @@ sealed interface NetcdfFileGenerator {
 
       builder.setFill(true);
 
-      ArrayInt xData = makeDimensionArray(maxX);
-      ArrayInt yData = makeDimensionArray(maxY);
-      ArrayInt zData = makeDimensionArray(maxZ);
-      ArrayInt tData = makeDimensionArray(maxT);
+      ArrayInt dataX = makeDimensionArray(maxX);
+      ArrayInt dataY = makeDimensionArray(maxY);
+      ArrayInt dataZ = makeDimensionArray(maxZ);
+      ArrayInt dataT = makeDimensionArray(maxT);
 
       try (NetcdfFormatWriter writer = builder.build()) {
 
         Variable varX = writer.findVariable("x");
-        writer.write(varX, xData);
+        writer.write(varX, dataX);
 
         Variable varY = writer.findVariable("y");
-        writer.write(varY, yData);
+        writer.write(varY, dataY);
 
         Variable varZ = writer.findVariable("z");
-        writer.write(varZ, zData);
+        writer.write(varZ, dataZ);
 
         Variable varT = writer.findVariable("t");
-        writer.write(varT, tData);
+        writer.write(varT, dataT);
 
       } catch (InvalidRangeException e) {
         throw new IllegalArgumentException("Bad range for write.", e);

@@ -27,8 +27,8 @@ class HrrrTest {
       var binding =
           SchemaBinding.<Vil.Builder>builder()
               .recordInitializer(Vil::builder)
-              .floatDimensionVariable("x", Vil.Builder::x)
-              .floatDimensionVariable("y", Vil.Builder::y)
+              .floatDimensionVariable("x", Vil.Builder::coordX)
+              .floatDimensionVariable("y", Vil.Builder::coordY)
               .floatCoordinateVariable(
                   "Vertically_integrated_liquid_water_VIL_entire_atmosphere", Vil.Builder::vil)
               .build();
@@ -44,10 +44,10 @@ class HrrrTest {
     }
   }
 
-  record Vil(float x, float y, float vil) {
+  record Vil(float coordX, float coordY, float vil) {
 
     private Vil(Builder builder) {
-      this(builder.x, builder.y, builder.vil);
+      this(builder.coordX, builder.coordY, builder.vil);
     }
 
     static Builder builder() {
@@ -56,21 +56,21 @@ class HrrrTest {
 
     static final class Builder {
 
-      private float x;
+      private float coordX;
 
-      private float y;
+      private float coordY;
 
       private float vil;
 
       private Builder() {}
 
-      Builder x(float x) {
-        this.x = x;
+      Builder coordX(float x) {
+        this.coordX = x;
         return this;
       }
 
-      Builder y(float y) {
-        this.y = y;
+      Builder coordY(float y) {
+        this.coordY = y;
         return this;
       }
 

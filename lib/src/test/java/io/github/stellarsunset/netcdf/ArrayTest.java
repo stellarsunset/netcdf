@@ -9,7 +9,7 @@ import ucar.ma2.DataType;
 class ArrayTest {
 
   @Test
-  void testD0_Byte() {
+  void testD0_byte() {
     ucar.ma2.Array array = ucar.ma2.Array.factory(DataType.BYTE, new int[] {});
     array.setByte(0, (byte) 0);
 
@@ -18,7 +18,7 @@ class ArrayTest {
   }
 
   @Test
-  void testD1_Byte() {
+  void testD1_byte() {
     ucar.ma2.Array array = ucar.ma2.Array.factory(DataType.BYTE, new int[] {1});
     array.setByte(0, (byte) 0);
 
@@ -27,7 +27,7 @@ class ArrayTest {
   }
 
   @Test
-  void testD2_Byte() {
+  void testD2_byte() {
     ucar.ma2.Array array = ucar.ma2.Array.factory(DataType.BYTE, new int[] {1, 1});
     array.setByte(0, (byte) 0);
 
@@ -36,7 +36,7 @@ class ArrayTest {
   }
 
   @Test
-  void testD3_Byte() {
+  void testD3_byte() {
     ucar.ma2.Array array = ucar.ma2.Array.factory(DataType.BYTE, new int[] {1, 1, 1});
     array.setByte(0, (byte) 0);
 
@@ -45,7 +45,7 @@ class ArrayTest {
   }
 
   @Test
-  void testD4_Byte() {
+  void testD4_byte() {
     ucar.ma2.Array array = ucar.ma2.Array.factory(DataType.BYTE, new int[] {1, 1, 1, 1});
     array.setByte(0, (byte) 0);
 
@@ -54,7 +54,7 @@ class ArrayTest {
   }
 
   @Test
-  void testD0_Bool() {
+  void testD0_bool() {
     ucar.ma2.Array array = ucar.ma2.Array.factory(DataType.BOOLEAN, new int[] {});
     array.setBoolean(0, false);
 
@@ -63,7 +63,7 @@ class ArrayTest {
   }
 
   @Test
-  void testD1_Bool() {
+  void testD1_bool() {
     ucar.ma2.Array array = ucar.ma2.Array.factory(DataType.BOOLEAN, new int[] {1});
     array.setBoolean(0, false);
 
@@ -72,7 +72,7 @@ class ArrayTest {
   }
 
   @Test
-  void testD2_Bool() {
+  void testD2_bool() {
     ucar.ma2.Array array = ucar.ma2.Array.factory(DataType.BOOLEAN, new int[] {1, 1});
     array.setBoolean(0, false);
 
@@ -81,7 +81,7 @@ class ArrayTest {
   }
 
   @Test
-  void testD3_Bool() {
+  void testD3_bool() {
     ucar.ma2.Array array = ucar.ma2.Array.factory(DataType.BOOLEAN, new int[] {1, 1, 1});
     array.setBoolean(0, false);
 
@@ -90,7 +90,7 @@ class ArrayTest {
   }
 
   @Test
-  void testD4_Bool() {
+  void testD4_bool() {
     ucar.ma2.Array array = ucar.ma2.Array.factory(DataType.BOOLEAN, new int[] {1, 1, 1, 1});
     array.setBoolean(0, false);
 
@@ -99,7 +99,7 @@ class ArrayTest {
   }
 
   @Test
-  void testD0_Char() {
+  void testD0_char() {
     ucar.ma2.Array array = ucar.ma2.Array.factory(DataType.CHAR, new int[] {});
     array.setChar(0, 'a');
 
@@ -108,7 +108,7 @@ class ArrayTest {
   }
 
   @Test
-  void testD1_Char() {
+  void testD1_char() {
     ucar.ma2.Array array = ucar.ma2.Array.factory(DataType.CHAR, new int[] {1});
     array.setChar(0, 'a');
 
@@ -117,7 +117,7 @@ class ArrayTest {
   }
 
   @Test
-  void testD2_Char() {
+  void testD2_char() {
     ucar.ma2.Array array = ucar.ma2.Array.factory(DataType.CHAR, new int[] {1, 1});
     array.setChar(0, 'a');
 
@@ -126,7 +126,7 @@ class ArrayTest {
   }
 
   @Test
-  void testD3_Char() {
+  void testD3_char() {
     ucar.ma2.Array array = ucar.ma2.Array.factory(DataType.CHAR, new int[] {1, 1, 1});
     array.setChar(0, 'a');
 
@@ -135,7 +135,7 @@ class ArrayTest {
   }
 
   @Test
-  void testD4_Char() {
+  void testD4_char() {
     ucar.ma2.Array array = ucar.ma2.Array.factory(DataType.CHAR, new int[] {1, 1, 1, 1});
     array.setChar(0, 'a');
 
@@ -144,7 +144,7 @@ class ArrayTest {
   }
 
   @Test
-  void testD0_Double() {
+  void testD0_double() {
     ucar.ma2.Array array = ucar.ma2.Array.factory(DataType.DOUBLE, new int[] {});
     array.setDouble(0, 0.1);
 
@@ -153,7 +153,7 @@ class ArrayTest {
   }
 
   @Test
-  void testD1_Double() {
+  void testD1_double() {
     ucar.ma2.Array array = ucar.ma2.Array.factory(DataType.DOUBLE, new int[] {1});
     array.setDouble(0, 0.1);
 
@@ -162,7 +162,7 @@ class ArrayTest {
   }
 
   @Test
-  void testD2_Double() {
+  void testD2_double() {
     ucar.ma2.Array array = ucar.ma2.Array.factory(DataType.DOUBLE, new int[] {1, 1});
     array.setDouble(0, 0.1);
 
@@ -171,7 +171,7 @@ class ArrayTest {
   }
 
   @Test
-  void testD3_Double() {
+  void testD3_double() {
     ucar.ma2.Array array = ucar.ma2.Array.factory(DataType.DOUBLE, new int[] {1, 1, 1});
     array.setDouble(0, 0.1);
 
@@ -180,7 +180,7 @@ class ArrayTest {
   }
 
   @Test
-  void testD4_Double() {
+  void testD4_double() {
     ucar.ma2.Array array = ucar.ma2.Array.factory(DataType.DOUBLE, new int[] {1, 1, 1, 1});
     array.setDouble(0, 0.1);
 
@@ -189,7 +189,7 @@ class ArrayTest {
   }
 
   @Test
-  void testD0_Float() {
+  void testD0_float() {
     ucar.ma2.Array array = ucar.ma2.Array.factory(DataType.FLOAT, new int[] {});
     array.setFloat(0, 0.1f);
 
@@ -198,7 +198,7 @@ class ArrayTest {
   }
 
   @Test
-  void testD1_Float() {
+  void testD1_float() {
     ucar.ma2.Array array = ucar.ma2.Array.factory(DataType.FLOAT, new int[] {1});
     array.setFloat(0, 0.1f);
 
@@ -207,7 +207,7 @@ class ArrayTest {
   }
 
   @Test
-  void testD2_Float() {
+  void testD2_float() {
     ucar.ma2.Array array = ucar.ma2.Array.factory(DataType.FLOAT, new int[] {1, 1});
     array.setFloat(0, 0.1f);
 
@@ -216,7 +216,7 @@ class ArrayTest {
   }
 
   @Test
-  void testD3_Float() {
+  void testD3_float() {
     ucar.ma2.Array array = ucar.ma2.Array.factory(DataType.FLOAT, new int[] {1, 1, 1});
     array.setFloat(0, 0.1f);
 
@@ -225,7 +225,7 @@ class ArrayTest {
   }
 
   @Test
-  void testD4_Float() {
+  void testD4_float() {
     ucar.ma2.Array array = ucar.ma2.Array.factory(DataType.FLOAT, new int[] {1, 1, 1, 1});
     array.setFloat(0, 0.1f);
 
@@ -234,7 +234,7 @@ class ArrayTest {
   }
 
   @Test
-  void testD0_Int() {
+  void testD0_int() {
     ucar.ma2.Array array = ucar.ma2.Array.factory(DataType.INT, new int[] {});
     array.setInt(0, 2);
 
@@ -243,7 +243,7 @@ class ArrayTest {
   }
 
   @Test
-  void testD1_Int() {
+  void testD1_int() {
     ucar.ma2.Array array = ucar.ma2.Array.factory(DataType.INT, new int[] {1});
     array.setInt(0, 2);
 
@@ -252,7 +252,7 @@ class ArrayTest {
   }
 
   @Test
-  void testD2_Int() {
+  void testD2_int() {
     ucar.ma2.Array array = ucar.ma2.Array.factory(DataType.INT, new int[] {1, 1});
     array.setInt(0, 2);
 
@@ -261,7 +261,7 @@ class ArrayTest {
   }
 
   @Test
-  void testD3_Int() {
+  void testD3_int() {
     ucar.ma2.Array array = ucar.ma2.Array.factory(DataType.INT, new int[] {1, 1, 1});
     array.setInt(0, 2);
 
@@ -270,7 +270,7 @@ class ArrayTest {
   }
 
   @Test
-  void testD4_Int() {
+  void testD4_int() {
     ucar.ma2.Array array = ucar.ma2.Array.factory(DataType.INT, new int[] {1, 1, 1, 1});
     array.setInt(0, 2);
 
@@ -279,7 +279,7 @@ class ArrayTest {
   }
 
   @Test
-  void testD0_Long() {
+  void testD0_long() {
     ucar.ma2.Array array = ucar.ma2.Array.factory(DataType.LONG, new int[] {});
     array.setLong(0, 1L);
 
@@ -288,7 +288,7 @@ class ArrayTest {
   }
 
   @Test
-  void testD1_Long() {
+  void testD1_long() {
     ucar.ma2.Array array = ucar.ma2.Array.factory(DataType.LONG, new int[] {1});
     array.setLong(0, 1L);
 
@@ -297,7 +297,7 @@ class ArrayTest {
   }
 
   @Test
-  void testD2_Long() {
+  void testD2_long() {
     ucar.ma2.Array array = ucar.ma2.Array.factory(DataType.LONG, new int[] {1, 1});
     array.setLong(0, 1L);
 
@@ -306,7 +306,7 @@ class ArrayTest {
   }
 
   @Test
-  void testD3_Long() {
+  void testD3_long() {
     ucar.ma2.Array array = ucar.ma2.Array.factory(DataType.LONG, new int[] {1, 1, 1});
     array.setLong(0, 1L);
 
@@ -315,7 +315,7 @@ class ArrayTest {
   }
 
   @Test
-  void testD4_Long() {
+  void testD4_long() {
     ucar.ma2.Array array = ucar.ma2.Array.factory(DataType.LONG, new int[] {1, 1, 1, 1});
     array.setLong(0, 1L);
 
@@ -324,7 +324,7 @@ class ArrayTest {
   }
 
   @Test
-  void testD0_Short() {
+  void testD0_short() {
     ucar.ma2.Array array = ucar.ma2.Array.factory(DataType.SHORT, new int[] {});
     array.setShort(0, (short) 2);
 
@@ -333,7 +333,7 @@ class ArrayTest {
   }
 
   @Test
-  void testD1_Short() {
+  void testD1_short() {
     ucar.ma2.Array array = ucar.ma2.Array.factory(DataType.SHORT, new int[] {1});
     array.setShort(0, (short) 2);
 
@@ -342,7 +342,7 @@ class ArrayTest {
   }
 
   @Test
-  void testD2_Short() {
+  void testD2_short() {
     ucar.ma2.Array array = ucar.ma2.Array.factory(DataType.SHORT, new int[] {1, 1});
     array.setShort(0, (short) 2);
 
@@ -351,7 +351,7 @@ class ArrayTest {
   }
 
   @Test
-  void testD3_Short() {
+  void testD3_short() {
     ucar.ma2.Array array = ucar.ma2.Array.factory(DataType.SHORT, new int[] {1, 1, 1});
     array.setShort(0, (short) 2);
 
@@ -360,7 +360,7 @@ class ArrayTest {
   }
 
   @Test
-  void testD4_Short() {
+  void testD4_short() {
     ucar.ma2.Array array = ucar.ma2.Array.factory(DataType.SHORT, new int[] {1, 1, 1, 1});
     array.setShort(0, (short) 2);
 

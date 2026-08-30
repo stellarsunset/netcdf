@@ -178,9 +178,17 @@ public final class SchemaBinding<T> {
       return dimensionVariable(dimensionName, variableName, setter);
     }
 
+    public Builder<T> byteDimensionVariable(String dimensionName, FieldBinding.Byte<T> setter) {
+      return byteDimensionVariable(dimensionName, dimensionName, setter);
+    }
+
     public Builder<T> charDimensionVariable(
         String dimensionName, String variableName, FieldBinding.Char<T> setter) {
       return dimensionVariable(dimensionName, variableName, setter);
+    }
+
+    public Builder<T> charDimensionVariable(String dimensionName, FieldBinding.Char<T> setter) {
+      return charDimensionVariable(dimensionName, dimensionName, setter);
     }
 
     public Builder<T> booleanDimensionVariable(
@@ -188,9 +196,17 @@ public final class SchemaBinding<T> {
       return dimensionVariable(dimensionName, variableName, setter);
     }
 
+    public Builder<T> booleanDimensionVariable(String dimensionName, FieldBinding.Bool<T> setter) {
+      return booleanDimensionVariable(dimensionName, dimensionName, setter);
+    }
+
     public Builder<T> shortDimensionVariable(
         String dimensionName, String variableName, FieldBinding.Short<T> setter) {
       return dimensionVariable(dimensionName, variableName, setter);
+    }
+
+    public Builder<T> shortDimensionVariable(String dimensionName, FieldBinding.Short<T> setter) {
+      return shortDimensionVariable(dimensionName, dimensionName, setter);
     }
 
     public Builder<T> intDimensionVariable(
@@ -198,9 +214,17 @@ public final class SchemaBinding<T> {
       return dimensionVariable(dimensionName, variableName, setter);
     }
 
+    public Builder<T> intDimensionVariable(String dimensionName, FieldBinding.Int<T> setter) {
+      return intDimensionVariable(dimensionName, dimensionName, setter);
+    }
+
     public Builder<T> longDimensionVariable(
         String dimensionName, String variableName, FieldBinding.Long<T> setter) {
       return dimensionVariable(dimensionName, variableName, setter);
+    }
+
+    public Builder<T> longDimensionVariable(String dimensionName, FieldBinding.Long<T> setter) {
+      return longDimensionVariable(dimensionName, dimensionName, setter);
     }
 
     public Builder<T> floatDimensionVariable(
@@ -208,37 +232,13 @@ public final class SchemaBinding<T> {
       return dimensionVariable(dimensionName, variableName, setter);
     }
 
+    public Builder<T> floatDimensionVariable(String dimensionName, FieldBinding.Float<T> setter) {
+      return floatDimensionVariable(dimensionName, dimensionName, setter);
+    }
+
     public Builder<T> doubleDimensionVariable(
         String dimensionName, String variableName, FieldBinding.Double<T> setter) {
       return dimensionVariable(dimensionName, variableName, setter);
-    }
-
-    public Builder<T> byteDimensionVariable(String dimensionName, FieldBinding.Byte<T> setter) {
-      return byteDimensionVariable(dimensionName, dimensionName, setter);
-    }
-
-    public Builder<T> charDimensionVariable(String dimensionName, FieldBinding.Char<T> setter) {
-      return charDimensionVariable(dimensionName, dimensionName, setter);
-    }
-
-    public Builder<T> booleanDimensionVariable(String dimensionName, FieldBinding.Bool<T> setter) {
-      return booleanDimensionVariable(dimensionName, dimensionName, setter);
-    }
-
-    public Builder<T> shortDimensionVariable(String dimensionName, FieldBinding.Short<T> setter) {
-      return shortDimensionVariable(dimensionName, dimensionName, setter);
-    }
-
-    public Builder<T> intDimensionVariable(String dimensionName, FieldBinding.Int<T> setter) {
-      return intDimensionVariable(dimensionName, dimensionName, setter);
-    }
-
-    public Builder<T> longDimensionVariable(String dimensionName, FieldBinding.Long<T> setter) {
-      return longDimensionVariable(dimensionName, dimensionName, setter);
-    }
-
-    public Builder<T> floatDimensionVariable(String dimensionName, FieldBinding.Float<T> setter) {
-      return floatDimensionVariable(dimensionName, dimensionName, setter);
     }
 
     public Builder<T> doubleDimensionVariable(String dimensionName, FieldBinding.Double<T> setter) {

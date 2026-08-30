@@ -167,20 +167,20 @@ class ValidatedBindingTest {
 
     builder.setFill(true);
 
-    ArrayInt xData = makeDimensionArray(10);
-    ArrayInt yData = makeDimensionArray(10);
-    ArrayInt zData = makeDimensionArray(5);
+    ArrayInt dataX = makeDimensionArray(10);
+    ArrayInt dataY = makeDimensionArray(10);
+    ArrayInt dataZ = makeDimensionArray(5);
 
     try (NetcdfFormatWriter writer = builder.build()) {
 
       Variable varX = writer.findVariable("x");
-      writer.write(varX, xData);
+      writer.write(varX, dataX);
 
       Variable varY = writer.findVariable("y");
-      writer.write(varY, yData);
+      writer.write(varY, dataY);
 
       Variable varZ = writer.findVariable("z");
-      writer.write(varZ, zData);
+      writer.write(varZ, dataZ);
 
     } catch (InvalidRangeException e) {
       throw new IllegalArgumentException("Bad range for write.", e);

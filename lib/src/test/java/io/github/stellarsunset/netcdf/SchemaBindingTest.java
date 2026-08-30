@@ -1,6 +1,8 @@
 package io.github.stellarsunset.netcdf;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 
 import java.util.List;
 import org.junit.jupiter.api.Test;

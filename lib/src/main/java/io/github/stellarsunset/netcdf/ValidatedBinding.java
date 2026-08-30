@@ -378,7 +378,8 @@ sealed interface ValidatedBinding<T> extends AutoCloseable {
           IllegalArgumentException exception =
               new IllegalArgumentException(
                   String.format(
-                      "Errors(%d) expected when applying the provided schema bindings to the given file.",
+                      "Errors(%d) expected when applying the provided schema bindings to the given"
+                          + " file.",
                       errors.size()));
 
           errors.forEach(error -> exception.addSuppressed(error.asException()));
@@ -426,7 +427,8 @@ sealed interface ValidatedBinding<T> extends AutoCloseable {
 
           String message =
               String.format(
-                  "Binding to Java objects of %s variable types not supported. Requested variable was: %s.",
+                  "Binding to Java objects of %s variable types not supported. Requested variable"
+                      + " was: %s.",
                   dataType, variableName);
 
           return new IllegalArgumentException(message);
@@ -446,7 +448,8 @@ sealed interface ValidatedBinding<T> extends AutoCloseable {
 
           String message =
               String.format(
-                  "Provided setter %s doesn't match the variable data type in the file %s for variable %s.",
+                  "Provided setter %s doesn't match the variable data type in the file %s for"
+                      + " variable %s.",
                   setterType.getTypeName(), fileType, variableName);
 
           return new IllegalArgumentException(message);
@@ -493,7 +496,8 @@ sealed interface ValidatedBinding<T> extends AutoCloseable {
 
           String message =
               String.format(
-                  "Dimension variable %s with dimension %s doesn't vary over one of the coordinate dimensions %s",
+                  "Dimension variable %s with dimension %s doesn't vary over one of the coordinate"
+                      + " dimensions %s",
                   variableName, dimensionName, String.join(",", coordinateDimensions));
 
           return new IllegalArgumentException(message);
@@ -515,7 +519,8 @@ sealed interface ValidatedBinding<T> extends AutoCloseable {
 
           String message =
               String.format(
-                  "The requested dimension variable %s doesn't vary over a single dimension, it varies over %s",
+                  "The requested dimension variable %s doesn't vary over a single dimension, it"
+                      + " varies over %s",
                   variableName, dimensionNames);
 
           return new IllegalArgumentException(message);
@@ -534,7 +539,8 @@ sealed interface ValidatedBinding<T> extends AutoCloseable {
 
           String message =
               String.format(
-                  "Currently the library does not support working with coordinate variables of the provided number of dimensions %s. The requested variables were: %s.",
+                  "Currently the library does not support working with coordinate variables of the"
+                      + " provided number of dimensions %s. The requested variables were: %s.",
                   dimensionCount, String.join(",", variableNames));
 
           return new IllegalArgumentException(message);

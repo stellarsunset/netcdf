@@ -33,12 +33,12 @@ class SchemaBoundRecordReader1DTest {
   }
 
   @Test
-  void test1D_BytesOnly() throws IOException {
+  void test1D_bytesOnly() throws IOException {
 
     var binding =
         SchemaBinding.<Data1D.Builder>builder()
             .recordInitializer(Data1D::builder)
-            .intDimensionVariable("x", Data1D.Builder::x)
+            .intDimensionVariable("x", Data1D.Builder::coordX)
             .byteCoordinateVariable("byte", (b, v) -> b.variable("byte", v))
             .build();
 
@@ -53,19 +53,19 @@ class SchemaBoundRecordReader1DTest {
     Data1D eightyNine = cube.read(89);
 
     assertAll(
-        () -> assertEquals(0, first.x(), "First X"),
+        () -> assertEquals(0, first.coordX(), "First X"),
         () -> assertEquals(Set.of("byte"), first.variables().keySet(), "First Variables"),
-        () -> assertEquals(89, eightyNine.x(), "89th X"),
+        () -> assertEquals(89, eightyNine.coordX(), "89th X"),
         () -> assertEquals(Set.of("byte"), eightyNine.variables().keySet(), "89th Variables"));
   }
 
   @Test
-  void test1D_BytesAndDoubles() throws IOException {
+  void test1D_bytesAndDoubles() throws IOException {
 
     var binding =
         SchemaBinding.<Data1D.Builder>builder()
             .recordInitializer(Data1D::builder)
-            .intDimensionVariable("x", "x", Data1D.Builder::x)
+            .intDimensionVariable("x", "x", Data1D.Builder::coordX)
             .byteCoordinateVariable("byte", (b, v) -> b.variable("byte", v))
             .intCoordinateVariable("int", (b, v) -> b.variable("int", v))
             .doubleCoordinateVariable("double", (b, v) -> b.variable("double", v))
@@ -82,11 +82,11 @@ class SchemaBoundRecordReader1DTest {
     Data1D eightyNine = cube.read(89);
 
     assertAll(
-        () -> assertEquals(0, first.x(), "First X"),
+        () -> assertEquals(0, first.coordX(), "First X"),
         () ->
             assertEquals(
                 Set.of("byte", "int", "double"), first.variables().keySet(), "First Variables"),
-        () -> assertEquals(89, eightyNine.x(), "89th X"),
+        () -> assertEquals(89, eightyNine.coordX(), "89th X"),
         () ->
             assertEquals(
                 Set.of("byte", "int", "double"),
@@ -95,7 +95,7 @@ class SchemaBoundRecordReader1DTest {
   }
 
   @Test
-  void test1D_OmitDimensions() throws IOException {
+  void test1D_omitDimensions() throws IOException {
 
     var binding =
         SchemaBinding.<Data1D.Builder>builder()
@@ -111,10 +111,10 @@ class SchemaBoundRecordReader1DTest {
     assertEquals(90, cube.max(), "Max");
   }
 
-  private record Data1D(int x, Map<String, Object> variables) {
+  private record Data1D(int coordX, Map<String, Object> variables) {
 
     private Data1D(Builder builder) {
-      this(builder.x, Map.copyOf(builder.variables));
+      this(builder.coordX, Map.copyOf(builder.variables));
     }
 
     static Builder builder() {
@@ -123,13 +123,13 @@ class SchemaBoundRecordReader1DTest {
 
     static final class Builder {
 
-      private int x;
+      private int coordX;
       private final Map<String, Object> variables = new HashMap<>();
 
       private Builder() {}
 
-      Builder x(int x) {
-        this.x = x;
+      Builder coordX(int x) {
+        this.coordX = x;
         return this;
       }
 

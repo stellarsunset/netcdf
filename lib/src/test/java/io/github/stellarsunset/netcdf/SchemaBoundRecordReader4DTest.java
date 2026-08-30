@@ -33,15 +33,15 @@ class SchemaBoundRecordReader4DTest {
   }
 
   @Test
-  void test4D_BytesOnly() throws IOException {
+  void test4D_bytesOnly() throws IOException {
 
     var binding =
         SchemaBinding.<Data4D.Builder>builder()
             .recordInitializer(Data4D::builder)
-            .intDimensionVariable("x", Data4D.Builder::x)
-            .intDimensionVariable("y", Data4D.Builder::y)
-            .intDimensionVariable("z", Data4D.Builder::z)
-            .intDimensionVariable("t", Data4D.Builder::t)
+            .intDimensionVariable("x", Data4D.Builder::coordX)
+            .intDimensionVariable("y", Data4D.Builder::coordY)
+            .intDimensionVariable("z", Data4D.Builder::coordZ)
+            .intDimensionVariable("t", Data4D.Builder::coordT)
             .byteCoordinateVariable("byte", (b, v) -> b.variable("byte", v))
             .build();
 
@@ -62,38 +62,38 @@ class SchemaBoundRecordReader4DTest {
     Data4D sixThousandth = cube.read(0, 5, 0, 0);
 
     assertAll(
-        () -> assertEquals(0, first.x(), "First X"),
-        () -> assertEquals(0, first.y(), "First Y"),
-        () -> assertEquals(0, first.z(), "First Z"),
-        () -> assertEquals(0, first.t(), "First T"),
+        () -> assertEquals(0, first.coordX(), "First X"),
+        () -> assertEquals(0, first.coordY(), "First Y"),
+        () -> assertEquals(0, first.coordZ(), "First Z"),
+        () -> assertEquals(0, first.coordT(), "First T"),
         () -> assertEquals(Set.of("byte"), first.variables().keySet(), "First Variables"),
-        () -> assertEquals(0, tenth.x(), "10th X"),
-        () -> assertEquals(0, tenth.y(), "10th Y"),
-        () -> assertEquals(0, tenth.z(), "10th Z"),
-        () -> assertEquals(10, tenth.t(), "10th T"),
+        () -> assertEquals(0, tenth.coordX(), "10th X"),
+        () -> assertEquals(0, tenth.coordY(), "10th Y"),
+        () -> assertEquals(0, tenth.coordZ(), "10th Z"),
+        () -> assertEquals(10, tenth.coordT(), "10th T"),
         () -> assertEquals(Set.of("byte"), tenth.variables().keySet(), "10th Variables"),
-        () -> assertEquals(0, twoHundredth.x(), "200th X"),
-        () -> assertEquals(0, twoHundredth.y(), "200th Y"),
-        () -> assertEquals(5, twoHundredth.z(), "200th Z"),
-        () -> assertEquals(0, twoHundredth.t(), "200th T"),
+        () -> assertEquals(0, twoHundredth.coordX(), "200th X"),
+        () -> assertEquals(0, twoHundredth.coordY(), "200th Y"),
+        () -> assertEquals(5, twoHundredth.coordZ(), "200th Z"),
+        () -> assertEquals(0, twoHundredth.coordT(), "200th T"),
         () -> assertEquals(Set.of("byte"), twoHundredth.variables().keySet(), "200th Variables"),
-        () -> assertEquals(0, sixThousandth.x(), "6000th X"),
-        () -> assertEquals(5, sixThousandth.y(), "6000th Y"),
-        () -> assertEquals(0, sixThousandth.z(), "6000th Z"),
-        () -> assertEquals(0, sixThousandth.t(), "6000th T"),
+        () -> assertEquals(0, sixThousandth.coordX(), "6000th X"),
+        () -> assertEquals(5, sixThousandth.coordY(), "6000th Y"),
+        () -> assertEquals(0, sixThousandth.coordZ(), "6000th Z"),
+        () -> assertEquals(0, sixThousandth.coordT(), "6000th T"),
         () -> assertEquals(Set.of("byte"), sixThousandth.variables().keySet(), "6000th Variables"));
   }
 
   @Test
-  void test3D_BytesAndDoubles() throws IOException {
+  void test3D_bytesAndDoubles() throws IOException {
 
     var binding =
         SchemaBinding.<Data4D.Builder>builder()
             .recordInitializer(Data4D::builder)
-            .intDimensionVariable("x", Data4D.Builder::x)
-            .intDimensionVariable("y", Data4D.Builder::y)
-            .intDimensionVariable("z", Data4D.Builder::z)
-            .intDimensionVariable("t", Data4D.Builder::t)
+            .intDimensionVariable("x", Data4D.Builder::coordX)
+            .intDimensionVariable("y", Data4D.Builder::coordY)
+            .intDimensionVariable("z", Data4D.Builder::coordZ)
+            .intDimensionVariable("t", Data4D.Builder::coordT)
             .byteCoordinateVariable("byte", (b, v) -> b.variable("byte", v))
             .intCoordinateVariable("int", (b, v) -> b.variable("int", v))
             .doubleCoordinateVariable("double", (b, v) -> b.variable("double", v))
@@ -116,33 +116,33 @@ class SchemaBoundRecordReader4DTest {
     Data4D sixThousandth = cube.read(0, 5, 0, 0);
 
     assertAll(
-        () -> assertEquals(0, first.x(), "First X"),
-        () -> assertEquals(0, first.y(), "First Y"),
-        () -> assertEquals(0, first.z(), "First Z"),
-        () -> assertEquals(0, first.t(), "First T"),
+        () -> assertEquals(0, first.coordX(), "First X"),
+        () -> assertEquals(0, first.coordY(), "First Y"),
+        () -> assertEquals(0, first.coordZ(), "First Z"),
+        () -> assertEquals(0, first.coordT(), "First T"),
         () ->
             assertEquals(
                 Set.of("byte", "int", "double"), first.variables().keySet(), "First Variables"),
-        () -> assertEquals(0, tenth.x(), "10th X"),
-        () -> assertEquals(0, tenth.y(), "10th Y"),
-        () -> assertEquals(0, tenth.z(), "10th Z"),
-        () -> assertEquals(10, tenth.t(), "10th T"),
+        () -> assertEquals(0, tenth.coordX(), "10th X"),
+        () -> assertEquals(0, tenth.coordY(), "10th Y"),
+        () -> assertEquals(0, tenth.coordZ(), "10th Z"),
+        () -> assertEquals(10, tenth.coordT(), "10th T"),
         () ->
             assertEquals(
                 Set.of("byte", "int", "double"), tenth.variables().keySet(), "10th Variables"),
-        () -> assertEquals(0, twoHundredth.x(), "200th X"),
-        () -> assertEquals(0, twoHundredth.y(), "200th Y"),
-        () -> assertEquals(5, twoHundredth.z(), "200th Z"),
-        () -> assertEquals(0, twoHundredth.t(), "200th T"),
+        () -> assertEquals(0, twoHundredth.coordX(), "200th X"),
+        () -> assertEquals(0, twoHundredth.coordY(), "200th Y"),
+        () -> assertEquals(5, twoHundredth.coordZ(), "200th Z"),
+        () -> assertEquals(0, twoHundredth.coordT(), "200th T"),
         () ->
             assertEquals(
                 Set.of("byte", "int", "double"),
                 twoHundredth.variables().keySet(),
                 "200th Variables"),
-        () -> assertEquals(0, sixThousandth.x(), "6000th X"),
-        () -> assertEquals(5, sixThousandth.y(), "6000th Y"),
-        () -> assertEquals(0, sixThousandth.z(), "6000th Z"),
-        () -> assertEquals(0, sixThousandth.t(), "6000th T"),
+        () -> assertEquals(0, sixThousandth.coordX(), "6000th X"),
+        () -> assertEquals(5, sixThousandth.coordY(), "6000th Y"),
+        () -> assertEquals(0, sixThousandth.coordZ(), "6000th Z"),
+        () -> assertEquals(0, sixThousandth.coordT(), "6000th T"),
         () ->
             assertEquals(
                 Set.of("byte", "int", "double"),
@@ -151,7 +151,7 @@ class SchemaBoundRecordReader4DTest {
   }
 
   @Test
-  void test3D_OmitDimensions() throws IOException {
+  void test3D_omitDimensions() throws IOException {
 
     var binding =
         SchemaBinding.<Data4D.Builder>builder()
@@ -171,10 +171,16 @@ class SchemaBoundRecordReader4DTest {
         () -> assertEquals(40, cube.d3Max(), "D3 Max"));
   }
 
-  private record Data4D(int x, int y, int z, int t, Map<String, Object> variables) {
+  private record Data4D(
+      int coordX, int coordY, int coordZ, int coordT, Map<String, Object> variables) {
 
     private Data4D(Builder builder) {
-      this(builder.x, builder.y, builder.z, builder.t, Map.copyOf(builder.variables));
+      this(
+          builder.coordX,
+          builder.coordY,
+          builder.coordZ,
+          builder.coordT,
+          Map.copyOf(builder.variables));
     }
 
     static Builder builder() {
@@ -183,31 +189,31 @@ class SchemaBoundRecordReader4DTest {
 
     static final class Builder {
 
-      private int x;
-      private int y;
-      private int z;
-      private int t;
+      private int coordX;
+      private int coordY;
+      private int coordZ;
+      private int coordT;
       private final Map<String, Object> variables = new HashMap<>();
 
       private Builder() {}
 
-      Builder x(int x) {
-        this.x = x;
+      Builder coordX(int x) {
+        this.coordX = x;
         return this;
       }
 
-      Builder y(int y) {
-        this.y = y;
+      Builder coordY(int y) {
+        this.coordY = y;
         return this;
       }
 
-      Builder z(int z) {
-        this.z = z;
+      Builder coordZ(int z) {
+        this.coordZ = z;
         return this;
       }
 
-      Builder t(int t) {
-        this.t = t;
+      Builder coordT(int t) {
+        this.coordT = t;
         return this;
       }
 

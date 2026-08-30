@@ -33,13 +33,13 @@ class SchemaBoundRecordReader2DTest {
   }
 
   @Test
-  void test2D_BytesOnly() throws IOException {
+  void test2D_bytesOnly() throws IOException {
 
     var binding =
         SchemaBinding.<Data2D.Builder>builder()
             .recordInitializer(Data2D::builder)
-            .intDimensionVariable("x", Data2D.Builder::x)
-            .intDimensionVariable("y", Data2D.Builder::y)
+            .intDimensionVariable("x", Data2D.Builder::coordX)
+            .intDimensionVariable("y", Data2D.Builder::coordY)
             .byteCoordinateVariable("byte", (b, v) -> b.variable("byte", v))
             .build();
 
@@ -56,22 +56,22 @@ class SchemaBoundRecordReader2DTest {
     Data2D ninety = cube.read(40, 100);
 
     assertAll(
-        () -> assertEquals(0, first.x(), "First X"),
-        () -> assertEquals(0, first.y(), "First Y"),
+        () -> assertEquals(0, first.coordX(), "First X"),
+        () -> assertEquals(0, first.coordY(), "First Y"),
         () -> assertEquals(Set.of("byte"), first.variables().keySet(), "First Variables"),
-        () -> assertEquals(40, ninety.x(), "40th X"),
-        () -> assertEquals(100, ninety.y(), "100th Y"),
+        () -> assertEquals(40, ninety.coordX(), "40th X"),
+        () -> assertEquals(100, ninety.coordY(), "100th Y"),
         () -> assertEquals(Set.of("byte"), ninety.variables().keySet(), "90th Variables"));
   }
 
   @Test
-  void test2D_BytesAndDoubles() throws IOException {
+  void test2D_bytesAndDoubles() throws IOException {
 
     var binding =
         SchemaBinding.<Data2D.Builder>builder()
             .recordInitializer(Data2D::builder)
-            .intDimensionVariable("x", Data2D.Builder::x)
-            .intDimensionVariable("y", Data2D.Builder::y)
+            .intDimensionVariable("x", Data2D.Builder::coordX)
+            .intDimensionVariable("y", Data2D.Builder::coordY)
             .byteCoordinateVariable("byte", (b, v) -> b.variable("byte", v))
             .intCoordinateVariable("int", (b, v) -> b.variable("int", v))
             .doubleCoordinateVariable("double", (b, v) -> b.variable("double", v))
@@ -90,20 +90,20 @@ class SchemaBoundRecordReader2DTest {
     Data2D ninety = cube.read(0, 90);
 
     assertAll(
-        () -> assertEquals(0, first.x(), "First X"),
-        () -> assertEquals(0, first.y(), "First Y"),
+        () -> assertEquals(0, first.coordX(), "First X"),
+        () -> assertEquals(0, first.coordY(), "First Y"),
         () ->
             assertEquals(
                 Set.of("byte", "int", "double"), first.variables().keySet(), "First Variables"),
-        () -> assertEquals(0, ninety.x(), "90th X"),
-        () -> assertEquals(90, ninety.y(), "90th Y"),
+        () -> assertEquals(0, ninety.coordX(), "90th X"),
+        () -> assertEquals(90, ninety.coordY(), "90th Y"),
         () ->
             assertEquals(
                 Set.of("byte", "int", "double"), ninety.variables().keySet(), "90th Variables"));
   }
 
   @Test
-  void test2D_OmitDimensions() throws IOException {
+  void test2D_omitDimensions() throws IOException {
 
     var binding =
         SchemaBinding.<Data2D.Builder>builder()
@@ -121,10 +121,10 @@ class SchemaBoundRecordReader2DTest {
         () -> assertEquals(180, cube.d1Max(), "D1 Max"));
   }
 
-  private record Data2D(int x, int y, Map<String, Object> variables) {
+  private record Data2D(int coordX, int coordY, Map<String, Object> variables) {
 
     private Data2D(Builder builder) {
-      this(builder.x, builder.y, Map.copyOf(builder.variables));
+      this(builder.coordX, builder.coordY, Map.copyOf(builder.variables));
     }
 
     static Builder builder() {
@@ -133,19 +133,19 @@ class SchemaBoundRecordReader2DTest {
 
     static final class Builder {
 
-      private int x;
-      private int y;
+      private int coordX;
+      private int coordY;
       private final Map<String, Object> variables = new HashMap<>();
 
       private Builder() {}
 
-      Builder x(int x) {
-        this.x = x;
+      Builder coordX(int x) {
+        this.coordX = x;
         return this;
       }
 
-      Builder y(int y) {
-        this.y = y;
+      Builder coordY(int y) {
+        this.coordY = y;
         return this;
       }
 

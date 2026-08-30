@@ -33,14 +33,14 @@ class SchemaBoundRecordReader3DTest {
   }
 
   @Test
-  void test3D_BytesOnly() throws IOException {
+  void test3D_bytesOnly() throws IOException {
 
     var binding =
         SchemaBinding.<Data3D.Builder>builder()
             .recordInitializer(Data3D::builder)
-            .intDimensionVariable("x", Data3D.Builder::x)
-            .intDimensionVariable("y", Data3D.Builder::y)
-            .intDimensionVariable("z", Data3D.Builder::z)
+            .intDimensionVariable("x", Data3D.Builder::coordX)
+            .intDimensionVariable("y", Data3D.Builder::coordY)
+            .intDimensionVariable("z", Data3D.Builder::coordZ)
             .byteCoordinateVariable("byte", (b, v) -> b.variable("byte", v))
             .build();
 
@@ -59,29 +59,29 @@ class SchemaBoundRecordReader3DTest {
     Data3D twoHundredth = cube.read(0, 6, 20);
 
     assertAll(
-        () -> assertEquals(0, first.x(), "First X"),
-        () -> assertEquals(0, first.y(), "First Y"),
-        () -> assertEquals(0, first.z(), "First Z"),
+        () -> assertEquals(0, first.coordX(), "First X"),
+        () -> assertEquals(0, first.coordY(), "First Y"),
+        () -> assertEquals(0, first.coordZ(), "First Z"),
         () -> assertEquals(Set.of("byte"), first.variables().keySet(), "First Variables"),
-        () -> assertEquals(0, tenth.x(), "10th X"),
-        () -> assertEquals(0, tenth.y(), "10th Y"),
-        () -> assertEquals(10, tenth.z(), "10th Z"),
+        () -> assertEquals(0, tenth.coordX(), "10th X"),
+        () -> assertEquals(0, tenth.coordY(), "10th Y"),
+        () -> assertEquals(10, tenth.coordZ(), "10th Z"),
         () -> assertEquals(Set.of("byte"), tenth.variables().keySet(), "10th Variables"),
-        () -> assertEquals(0, twoHundredth.x(), "200th X"),
-        () -> assertEquals(6, twoHundredth.y(), "200th Y"),
-        () -> assertEquals(20, twoHundredth.z(), "200th Z"),
+        () -> assertEquals(0, twoHundredth.coordX(), "200th X"),
+        () -> assertEquals(6, twoHundredth.coordY(), "200th Y"),
+        () -> assertEquals(20, twoHundredth.coordZ(), "200th Z"),
         () -> assertEquals(Set.of("byte"), tenth.variables().keySet(), "200th Variables"));
   }
 
   @Test
-  void test3D_BytesAndDoubles() throws IOException {
+  void test3D_bytesAndDoubles() throws IOException {
 
     var binding =
         SchemaBinding.<Data3D.Builder>builder()
             .recordInitializer(Data3D::builder)
-            .intDimensionVariable("x", Data3D.Builder::x)
-            .intDimensionVariable("y", Data3D.Builder::y)
-            .intDimensionVariable("z", Data3D.Builder::z)
+            .intDimensionVariable("x", Data3D.Builder::coordX)
+            .intDimensionVariable("y", Data3D.Builder::coordY)
+            .intDimensionVariable("z", Data3D.Builder::coordZ)
             .byteCoordinateVariable("byte", (b, v) -> b.variable("byte", v))
             .intCoordinateVariable("int", (b, v) -> b.variable("int", v))
             .doubleCoordinateVariable("double", (b, v) -> b.variable("double", v))
@@ -102,28 +102,28 @@ class SchemaBoundRecordReader3DTest {
     Data3D twoHundredth = cube.read(0, 6, 20);
 
     assertAll(
-        () -> assertEquals(0, first.x(), "First X"),
-        () -> assertEquals(0, first.y(), "First Y"),
-        () -> assertEquals(0, first.z(), "First Z"),
+        () -> assertEquals(0, first.coordX(), "First X"),
+        () -> assertEquals(0, first.coordY(), "First Y"),
+        () -> assertEquals(0, first.coordZ(), "First Z"),
         () ->
             assertEquals(
                 Set.of("byte", "int", "double"), first.variables().keySet(), "First Variables"),
-        () -> assertEquals(0, tenth.x(), "10th X"),
-        () -> assertEquals(0, tenth.y(), "10th Y"),
-        () -> assertEquals(10, tenth.z(), "10th Z"),
+        () -> assertEquals(0, tenth.coordX(), "10th X"),
+        () -> assertEquals(0, tenth.coordY(), "10th Y"),
+        () -> assertEquals(10, tenth.coordZ(), "10th Z"),
         () ->
             assertEquals(
                 Set.of("byte", "int", "double"), tenth.variables().keySet(), "10th Variables"),
-        () -> assertEquals(0, twoHundredth.x(), "200th X"),
-        () -> assertEquals(6, twoHundredth.y(), "200th Y"),
-        () -> assertEquals(20, twoHundredth.z(), "200th Z"),
+        () -> assertEquals(0, twoHundredth.coordX(), "200th X"),
+        () -> assertEquals(6, twoHundredth.coordY(), "200th Y"),
+        () -> assertEquals(20, twoHundredth.coordZ(), "200th Z"),
         () ->
             assertEquals(
                 Set.of("byte", "int", "double"), tenth.variables().keySet(), "200th Variables"));
   }
 
   @Test
-  void test3D_OmitDimensions() throws IOException {
+  void test3D_omitDimensions() throws IOException {
 
     var binding =
         SchemaBinding.<Data3D.Builder>builder()
@@ -142,10 +142,10 @@ class SchemaBoundRecordReader3DTest {
         () -> assertEquals(30, cube.d2Max(), "D2 Max"));
   }
 
-  private record Data3D(int x, int y, int z, Map<String, Object> variables) {
+  private record Data3D(int coordX, int coordY, int coordZ, Map<String, Object> variables) {
 
     private Data3D(Builder builder) {
-      this(builder.x, builder.y, builder.z, Map.copyOf(builder.variables));
+      this(builder.coordX, builder.coordY, builder.coordZ, Map.copyOf(builder.variables));
     }
 
     static Builder builder() {
@@ -154,25 +154,25 @@ class SchemaBoundRecordReader3DTest {
 
     static final class Builder {
 
-      private int x;
-      private int y;
-      private int z;
+      private int coordX;
+      private int coordY;
+      private int coordZ;
       private final Map<String, Object> variables = new HashMap<>();
 
       private Builder() {}
 
-      Builder x(int x) {
-        this.x = x;
+      Builder coordX(int x) {
+        this.coordX = x;
         return this;
       }
 
-      Builder y(int y) {
-        this.y = y;
+      Builder coordY(int y) {
+        this.coordY = y;
         return this;
       }
 
-      Builder z(int z) {
-        this.z = z;
+      Builder coordZ(int z) {
+        this.coordZ = z;
         return this;
       }
 
