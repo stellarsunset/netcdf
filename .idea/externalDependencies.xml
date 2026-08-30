@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Managed by io.github.stellarsunset.java-conventions 0.0.6 - regenerate with
+     ./gradlew applyRepoTemplate; do not hand-edit. Declares the IDE plugins this repo expects so
+     IntelliJ prompts to install them on first open. -->
+<project version="4">
+  <component name="ExternalDependencies">
+    <plugin id="google-java-format" />
+  </component>
+</project>

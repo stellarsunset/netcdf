@@ -1,5 +1,7 @@
-# Created by https://www.toptal.com/developers/gitignore/api/intellij+all,java,gradle
-# Edit at https://www.toptal.com/developers/gitignore?templates=intellij+all,java,gradle
+# Managed by io.github.stellarsunset.java-conventions 0.0.6 - regenerate with
+# ./gradlew applyRepoTemplate; do not hand-edit.
+#
+# Based on https://www.toptal.com/developers/gitignore/api/intellij+all,java,gradle
 
 ### Intellij+all ###
 # Covers JetBrains IDEs: IntelliJ, RubyMine, PhpStorm, AppCode, PyCharm, CLion, Android Studio, WebStorm and Rider
@@ -30,19 +32,6 @@
 # Gradle
 .idea/**/gradle.xml
 .idea/**/libraries
-
-# Gradle and Maven with auto-import
-# When using Gradle or Maven with auto-import, you should exclude module files,
-# since they will be recreated, and may cause churn.  Uncomment if using
-# auto-import.
-# .idea/artifacts
-# .idea/compiler.xml
-# .idea/jarRepositories.xml
-# .idea/modules.xml
-# .idea/*.iml
-# .idea/modules
-# *.iml
-# *.ipr
 
 # CMake
 cmake-build-*/
@@ -81,13 +70,14 @@ fabric.properties
 .idea/caches/build_file_checksums.ser
 
 ### Intellij+all Patch ###
-# Ignore everything but code style settings and run configurations
-# that are supposed to be shared within teams.
+# Ignore everything under .idea except the settings that are meant to be shared within teams.
 
 .idea/*
 
 !.idea/codeStyles
 !.idea/runConfigurations
+!.idea/externalDependencies.xml
+!.idea/google-java-format.xml
 
 ### Java ###
 # Compiled class file
@@ -141,7 +131,6 @@ gradle-app.setting
 ### Gradle Patch ###
 # Java heap dump
 *.hprof
-
-# End of https://www.toptal.com/developers/gitignore/api/intellij+all,java,gradle
-
-lib/src/test/resources/hrrr
+*.grib2
+*.grib2.gbx9
+*.grib2.ncx4
