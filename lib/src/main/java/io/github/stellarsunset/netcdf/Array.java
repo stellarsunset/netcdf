@@ -22,7 +22,7 @@ import ucar.ma2.ArrayShort;
  *   <li>Specific Functionality - bonus methods integrating with {@link FieldBinding}s
  * </ol>
  */
-@SuppressWarnings("AvoidCommonTypeNames")
+@SuppressWarnings({"AvoidCommonTypeNames", "unchecked"})
 sealed interface Array {
 
   /**
@@ -84,7 +84,6 @@ sealed interface Array {
     }
   }
 
-  @SuppressWarnings("unchecked")
   static <S, T extends S> T getAsOrThrow(S s, Class<T> clz) {
     if (clz.isInstance(s)) {
       return (T) s;

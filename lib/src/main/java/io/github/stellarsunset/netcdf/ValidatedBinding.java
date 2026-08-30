@@ -5,6 +5,7 @@ import static java.util.stream.Collectors.joining;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.github.stellarsunset.commons.Either;
 import java.io.IOException;
 import java.util.Collection;
@@ -84,6 +85,13 @@ sealed interface ValidatedBinding<T> extends AutoCloseable {
    * @param binding the validated schema binding containing the dimensions/variables we care about
    * @param index the index of the dimension we want the variables for
    */
+  @SuppressFBWarnings(
+      value = "UPM_UNCALLED_PRIVATE_METHOD",
+      justification =
+          "False positive: this method is called from the D2/D3/D4 records via their"
+              + " d*DimensionVariables() accessors. SpotBugs miscounts callers of a private static"
+              + " interface method whose body contains a lambda (the sibling dimensionSize(), same"
+              + " shape but no lambda, is not flagged).")
   private static <T> Map<String, FieldBinding<T>> dimensionVariables(
       ValidatedBinding<T> binding, int index) {
 
@@ -104,10 +112,6 @@ sealed interface ValidatedBinding<T> extends AutoCloseable {
   record D1<T>(NetcdfFile context, SchemaBinding<T> schema) implements ValidatedBinding<T> {
     public int max() {
       return ValidatedBinding.dimensionSize(this, 0);
-    }
-
-    public Map<String, FieldBinding<T>> dimensionVariables() {
-      return ValidatedBinding.dimensionVariables(this, 0);
     }
   }
 

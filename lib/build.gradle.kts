@@ -1,6 +1,6 @@
 plugins {
     `java-library`
-    id("io.github.stellarsunset.java-conventions") version "0.0.6"
+    id("io.github.stellarsunset.java-conventions") version "0.0.8"
 }
 
 repositories {
@@ -19,6 +19,9 @@ dependencies {
     api(libs.commons)
     implementation(libs.guava)
     implementation(libs.slf4j.api)
+
+    // For @SuppressFBWarnings; compile-only since SpotBugs only reads it from bytecode.
+    compileOnly("com.github.spotbugs:spotbugs-annotations:4.10.2")
 
     testImplementation(libs.junit.jupiter)
     testImplementation(libs.grib)
