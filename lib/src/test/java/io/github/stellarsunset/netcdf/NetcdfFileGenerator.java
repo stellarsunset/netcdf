@@ -78,7 +78,7 @@ sealed interface NetcdfFileGenerator {
     }
   }
 
-  record XY(int maxX, int maxY) implements NetcdfFileGenerator {
+  record Xy(int maxX, int maxY) implements NetcdfFileGenerator {
 
     @Override
     public void writeVariables(File file, VariableSpec... variables) {
@@ -129,7 +129,7 @@ sealed interface NetcdfFileGenerator {
     }
   }
 
-  record XYZ(int maxX, int maxY, int maxZ) implements NetcdfFileGenerator {
+  record Xyz(int maxX, int maxY, int maxZ) implements NetcdfFileGenerator {
 
     @Override
     public void writeVariables(File file, VariableSpec... variables) {
@@ -186,7 +186,7 @@ sealed interface NetcdfFileGenerator {
     }
   }
 
-  record XYZT(int maxX, int maxY, int maxZ, int maxT) implements NetcdfFileGenerator {
+  record Xyzt(int maxX, int maxY, int maxZ, int maxT) implements NetcdfFileGenerator {
 
     @Override
     public void writeVariables(File file, VariableSpec... variables) {

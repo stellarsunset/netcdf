@@ -23,7 +23,7 @@ class SchemaBoundRecordReader2DTest {
   static void setup(@TempDir Path temp) {
     FILE = temp.resolve("test-data.nc").toFile();
 
-    var generator = new NetcdfFileGenerator.XY(90, 180);
+    var generator = new NetcdfFileGenerator.Xy(90, 180);
 
     generator.writeVariables(
         FILE,
@@ -139,22 +139,22 @@ class SchemaBoundRecordReader2DTest {
 
       private Builder() {}
 
-      public Builder x(int x) {
+      Builder x(int x) {
         this.x = x;
         return this;
       }
 
-      public Builder y(int y) {
+      Builder y(int y) {
         this.y = y;
         return this;
       }
 
-      public Builder variable(String name, Object value) {
+      Builder variable(String name, Object value) {
         this.variables.put(name, value);
         return this;
       }
 
-      public Data2D build() {
+      Data2D build() {
         return new Data2D(this);
       }
     }

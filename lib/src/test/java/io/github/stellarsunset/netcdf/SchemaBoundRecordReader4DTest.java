@@ -23,7 +23,7 @@ class SchemaBoundRecordReader4DTest {
   static void setup(@TempDir Path temp) {
     FILE = temp.resolve("test-data.nc").toFile();
 
-    var generator = new NetcdfFileGenerator.XYZT(10, 20, 30, 40);
+    var generator = new NetcdfFileGenerator.Xyzt(10, 20, 30, 40);
 
     generator.writeVariables(
         FILE,

@@ -90,7 +90,7 @@ public sealed interface Hypercube<T> extends AutoCloseable {
 
       @Override
       public T next() {
-        T t = cube.read(index);
+        final T t = cube.read(index);
         index++;
         return t;
       }
@@ -155,7 +155,7 @@ public sealed interface Hypercube<T> extends AutoCloseable {
 
       @Override
       public T next() {
-        T t = cube.read(i0, i1);
+        final T t = cube.read(i0, i1);
         i1++;
         if (i1 >= cube.d1Max()) {
           i0++;
@@ -233,7 +233,7 @@ public sealed interface Hypercube<T> extends AutoCloseable {
 
       @Override
       public T next() {
-        T t = cube.read(i0, i1, i2);
+        final T t = cube.read(i0, i1, i2);
         i2++;
         if (i2 >= cube.d2Max()) {
           i1++;
@@ -323,7 +323,7 @@ public sealed interface Hypercube<T> extends AutoCloseable {
 
       @Override
       public T next() {
-        T t = cube.read(i0, i1, i2, i3);
+        final T t = cube.read(i0, i1, i2, i3);
         i3++;
         if (i3 >= cube.d3Max()) {
           i2++;
