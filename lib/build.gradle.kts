@@ -21,7 +21,7 @@ dependencies {
     implementation(libs.slf4j.api)
 
     // For @SuppressFBWarnings; compile-only since SpotBugs only reads it from bytecode.
-    compileOnly("com.github.spotbugs:spotbugs-annotations:4.10.4")
+    compileOnly("com.github.spotbugs:spotbugs-annotations:4.10.5")
 
     testImplementation(libs.junit.jupiter)
     testImplementation(libs.grib)
